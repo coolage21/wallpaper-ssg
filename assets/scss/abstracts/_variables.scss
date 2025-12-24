@@ -1,0 +1,30 @@
+$black: #000;
+$white: #fff;
+$dark-gray: #363636;
+$gray: #797979;
+$middle-gray: #9F9F9F;
+$light-gray: #CACACA;
+$silver-gray: #F0F0F0;
+$purple: #8F60C7;
+$dark-purple: #604086;
+$red: #EE0700;
+$light-red: #FFC7C7;
+
+$main : $purple;
+$main2 : $dark-purple;
+$border : $light-gray;
+$checkedBg : $silver-gray;
+$unchecked : $gray;
+$disabledFont : $middle-gray;
+$disabledBg : $light-gray;
+
+/*clamp(MIN, VAL, MAX) 고민해보기*/
+$f-l: 20px;
+$f-m: 16px;
+$f-s: 14px;
+
+$f-heading : $f-l;
+$f-body : $f-m;
+$f-form-ttl : $f-m;
+$f-btn : $f-m;
+$f-form-body : $f-s;

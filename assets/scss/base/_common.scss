@@ -1,0 +1,194 @@
+/*default*/
+* {
+  font-family: 'pretendard';
+  font-size: 16px;
+  box-sizing: border-box;
+}
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding:0;
+  margin:-1px;
+  overflow: hidden;
+  border-width: 0;
+  clip-path: inset(50%);
+  clip: rect(0, 0, 0, 0);
+}
+.inline-flex {
+  display: inline-flex;
+  align-items: center;
+}
+/* layout */
+
+/* utils*/
+// button
+  button {
+    background-color: transparent;
+    border-radius: 0;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .btn {
+    font-weight: 500;
+    padding: 10px 15px;
+    background-color: $main;
+    transition: .2s;
+    color: $white;
+    &:hover {
+      background-color: $dark-purple;
+    }
+    &--g {
+      background-color: $gray;
+      &:hover {
+        background-color: $dark-gray;
+      }
+    }
+    &--w {
+      background-color: $white;
+      border: 1px solid $border;
+      color: $black;
+      &:hover {
+        background-color: $silver-gray;
+      }
+    }
+  }
+  // 색없음 버튼
+  .noColor {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border: 1px solid $light-red;
+    transition: .2s;
+    &--active, &:hover {
+      border: 1px solid $red;
+      &::after, &::before{
+        background-color: $red;
+      }
+    }
+    &::after, &::before {
+      content: '';
+      position: absolute;
+      left:50%;
+      right:50%;
+      width: 30px;
+      height: 1px;
+      transform: translate(-50%, -50%) rotate(45deg);
+      background-color: $light-red;
+    }
+    &::before {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+  }
+
+  .pagination {
+    font-weight: 500;
+    display: flex;
+    gap: 2px;
+    &__item {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: $white;
+      transition: .2s;
+      &:hover {
+        background-color: $light-gray;
+      }
+    }
+    &--active {
+      background-color: $light-gray;
+    }
+  }
+
+  .toggle {
+    font-size: $f-form-body;
+    display: inline-flex;
+    align-items: center;
+    &__btn {
+      display: inline-block;
+      width: 30px;
+      height: 16px;
+      background-color: $main;
+      border-radius: 8px;
+      position: relative;
+      margin-right: 10px;
+      i {
+        width: 12px;
+        height: 12px;
+        display: inline-block;
+        border-radius: 50%;
+        position: absolute;
+        top:2px;
+        left:2px;
+        background-color: $silver-gray;
+      }
+    }
+    &__btn--f {
+      background-color: $light-gray;
+      i {
+        background-color: $main;
+      }
+    }
+  }
+
+  /* form */
+  
+  .form {
+    &__color {
+      gap: 10px;
+      input[type=text] {
+        width: 60px;
+      }
+    }
+  }
+  .selectbox {
+    padding: 8px 10px;
+    border-radius: 0;
+  }
+  .btn2, .selectbox2, .input {
+    // width: fit-content;
+    font-size: $f-form-body;
+    font-weight: 500;
+    border: 1px solid $border;
+    height: 26px;
+    padding: 3px 10px;
+    &--checked {
+      background-color: $checkedBg;
+    }
+    &--unchecked {
+      color: $unchecked;
+      &:hover {
+        background-color: $checkedBg;
+        color: $black;
+      }
+    }
+    &--disabled {
+      background-color: $disabledBg;
+      color: $disabledFont;
+    }
+  }
+  .textarea {
+    padding: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    min-height: 80px;
+    border:none;
+  }
+  .label {
+    display: inline-block;
+    margin-right: 5px;
+  }
+  .input {
+    &--color {
+      border:none;
+      padding:0;
+      margin:0;
+      width: 26px;
+      height: 26px;
+      cursor: pointer;
+    }
+  }
+
+
+  
