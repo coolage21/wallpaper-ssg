@@ -85,12 +85,15 @@
     </div>
     <div>
       <h2>폼 토글</h2>
-      <button class="toggle">
-        <span class="toggle__btn">
+      <div>
+        <input type="checkbox" class="">
+        <label class="toggle">
+          <span class="toggle__btn">
           <i></i>
         </span>
-        <span>true</span>
-      </button>
+          <span>true</span>
+        </label>
+      </div>
       <button class="toggle">
         <span class="toggle__btn toggle__btn--f">
           <i></i>

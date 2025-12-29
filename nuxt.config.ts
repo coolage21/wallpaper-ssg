@@ -11,9 +11,19 @@ export default defineNuxtConfig({
       alias: {
         '@': fileURLToPath(new URL('.', import.meta.url))
       }
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `
+            @use "@/assets/scss/abstracts/variables.scss" as *;
+            @use "@/assets/scss/abstracts/mixins.scss" as *;
+          `
+        }
+      }
     }
   },
   css: [
     '@/assets/scss/main.scss'
-  ]
+  ],
 })

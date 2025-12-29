@@ -4,6 +4,9 @@
   font-size: 16px;
   box-sizing: border-box;
 }
+body {
+  background-color: $silver-gray;
+}
 .hidden {
   position: absolute;
   width: 1px;
@@ -16,21 +19,36 @@
   clip: rect(0, 0, 0, 0);
 }
 .inline-flex {
-  display: inline-flex;
-  align-items: center;
+  @include inlineflex-center;
 }
+
 /* layout */
-.ly-main {
-  width: 1200px;
+#__nuxt {
+  display: flex;
+  justify-content: center;
 }
+.wrapper {
+  margin-top: 40px;
+}
+.ly-main {
+  width: 1470px;
+  max-width: 98vw;
+  display: flex;
+  margin: 0 auto;
+  &__right {
+    padding-left: 30px;
+    flex: 1;
+    height: 86vh; // 버튼 위치를 고정시키기 위해
+    position: relative;
+  }
+}
+.main-ttl {
+  font-size: $f-l; 
+  font-weight: 700;
+}
+
 /* utils*/
 // button
-  button {
-    background-color: transparent;
-    border-radius: 0;
-    border: 1px solid transparent;
-    cursor: pointer;
-  }
   .btn {
     font-weight: 500;
     padding: 10px 15px;
@@ -43,12 +61,12 @@
     &--g {
       background-color: $gray;
       &:hover {
-        background-color: $dark-gray;
+        background-color: #5a5a5a;
       }
     }
     &--w {
       background-color: $white;
-      border: 1px solid $border;
+      border: 1px solid $gray;
       color: $black;
       &:hover {
         background-color: $silver-gray;
@@ -62,6 +80,7 @@
     height: 24px;
     border: 1px solid $light-red;
     transition: .2s;
+    flex-shrink: 0;
     &--active, &:hover {
       border: 1px solid $red;
       &::after, &::before{
@@ -83,31 +102,9 @@
     }
   }
 
-  .pagination {
-    font-weight: 500;
-    display: flex;
-    gap: 2px;
-    &__item {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: $white;
-      transition: .2s;
-      &:hover {
-        background-color: $light-gray;
-      }
-    }
-    &--active {
-      background-color: $light-gray;
-    }
-  }
-
   .toggle {
     font-size: $f-form-body;
-    display: inline-flex;
-    align-items: center;
+    @include inlineflex-center;
     &__btn {
       display: inline-block;
       width: 30px;
@@ -136,13 +133,9 @@
   }
 
   /* form */
-  
   .form {
     &__color {
       gap: 10px;
-      input[type=text] {
-        width: 60px;
-      }
     }
   }
   .selectbox {
@@ -155,7 +148,9 @@
     font-weight: 500;
     border: 1px solid $border;
     height: 26px;
-    padding: 3px 10px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: .2s;
     &--checked {
       background-color: $checkedBg;
     }
@@ -176,6 +171,7 @@
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
     min-height: 80px;
     border:none;
+    flex: 1;
   }
   .label {
     display: inline-block;
@@ -190,7 +186,44 @@
       height: 26px;
       cursor: pointer;
     }
+    &--small {
+      width: 70px;
+    }
   }
 
 
-  
+/* window modal */
+.win {
+  background-color: $silver-gray;
+  padding: 40px;
+  width: 1040px;
+  max-width: 90vw;
+  &__wrapper {
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999999;
+    @include flex-center;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  &__ttl {
+    margin-bottom: 30px;
+  }
+}
+
+@media screen and (max-width:768px) {
+  *, p {
+    font-size: 15px;
+  }
+  .m-none {
+    display: none;
+  }
+  .wrapper {
+   margin: 20px 0;
+  }
+  .btn {
+    padding: 7px 12px;
+  }
+}

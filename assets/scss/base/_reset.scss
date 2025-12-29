@@ -49,4 +49,14 @@ table {
 button {
 	padding:0;
 	margin:0;
+	background-color: transparent;
+	border-radius: 0;
+	cursor: pointer;
+	border: 1px solid transparent;
+}
+label {
+	display: inline-block;
+}
+img {
+	display: block;
 }
