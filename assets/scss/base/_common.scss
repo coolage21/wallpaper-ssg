@@ -21,7 +21,9 @@ body {
 .inline-flex {
   @include inlineflex-center;
 }
-
+.noData {
+  color: $light-gray;
+}
 /* layout */
 #__nuxt {
   display: flex;
