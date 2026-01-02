@@ -1,7 +1,7 @@
 <template>
   <div class="win__wrapper">
     <div class="win bible">
-      <h2 class="main-ttl win__ttl">성경구절 찾기</h2>
+      <h2 class="main-ttl win__ttl">✝️성경구절 찾기</h2>
       <form class="bible__search" @submit.prevent="onSearch">
         <div>
           <label for="bible-version" class="hidden">성경 버전</label>
@@ -60,19 +60,31 @@
       <!-- search bible -->
       <div class="bible__show">
         <label for="bible-show" class="hidden">성경구절 검색 결과</label>
-        <textarea name="bible-show" id="bible-show" class="textarea bible__area" placeholder="성경구절이 보이는 구간입니다.">
+        <textarea name="bible-show" id="bible-show" class="textarea bible__area" placeholder="성경구절이 보이는 구간입니다." v-model="bibleTxt">
         </textarea>
       </div>
       <!-- show bible -->
       <div class="btn-wrapper">
-        <button type="button" class="btn btn--g btn-close">닫기</button>
-        <button type="button" class="btn">성경구절 등록하기</button>
+        <button @click="closeModal" type="button" class="btn btn--g btn-close">닫기</button>
+        <button @click="insertBible" type="button" class="btn">성경구절 등록하기</button>
       </div>
     </div>
   </div>
 </template>
 <script setup>
-
+  import { ref } from 'vue';
+  const emit = defineEmits([
+    'close-modal', 
+  ]
+  )
+  const bibleTxt = ref('');
+  const closeModal = () => {
+    emit('close-modal');
+  }
+  const insertBible = () => {
+    emit('close-modal');
+    emit('bible-txt', bibleTxt)
+  }
 </script>
 <style lang="scss" scoped>
   .bible{

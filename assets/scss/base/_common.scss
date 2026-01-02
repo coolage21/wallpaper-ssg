@@ -32,18 +32,6 @@ body {
 .wrapper {
   margin-top: 40px;
 }
-.ly-main {
-  width: 1470px;
-  max-width: 98vw;
-  display: flex;
-  margin: 0 auto;
-  &__right {
-    padding-left: 30px;
-    flex: 1;
-    height: 86vh; // 버튼 위치를 고정시키기 위해
-    position: relative;
-  }
-}
 .main-ttl {
   font-size: $f-l; 
   font-weight: 700;

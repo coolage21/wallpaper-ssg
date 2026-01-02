@@ -1,11 +1,270 @@
 <template>
-  <div>
-    
-  </div>
+  <section class="main__img">
+    <h2 class="hidden">이미지 검색 화면</h2>
+    <div v-if="currentImgSection == 0" class="search-img">
+      <h3 class="hidden">이미지 가져오기 화면</h3>
+      <button @click="currentImgSection = 1" type="button" class="btn btn--g btn-search-img">+ 이미지 가져오기</button>
+    </div>
+    <!-- search img -->
+    <div v-else-if="currentImgSection == 1" class="search-img btn-search-img2__wrapper">
+      <h3 class="hidden">이미지 가져오는 방법 선택하기</h3>
+      <button @click="goToNext('local')" type="button" class="btn btn-search-img2">내 컴퓨터에서 가져오기</button>
+      <button @click="goToNext('imgSite')" type="button" class="btn btn-search-img2">무료 이미지 사이트에서<br/>검색하기</button>
+      <button @click="goToNext('ai')" type="button" class="btn btn-search-img2">ai로 만들기(chatGpt)</button>
+      <button @click="goToFirst()" type="button" class="btn btn--g goBack">뒤로가기</button>
+    </div>
+    <!-- search img methods -->
+    <div v-else-if="currentImgSection == 2" class="search-img">
+      <h3 class="hidden">이미지 검색하기</h3>
+      <div class="search-img__form">
+        <h4 class="hidden">이미지 검색창</h4>
+        <label v-if="isMethod=='local'" for="search-img-txt">내 컴퓨터에서<br/>가져오기</label>
+        <label v-else-if="isMethod=='imgSite'" for="search-img-txt">무료 이미지 사이트에서<br/>검색하기</label>
+        <label v-else-if="isMethod=='ai'" for="search-img-txt">ai로 만들기<br/>(chatGpt)</label>
+        <div class="search-img__input">
+          <input id="search-img-txt" type="text" placeholder="이미지에 추가할 텍스트를 입력해주세요">
+          <button @click="searchImg" type="button" class="search-btn">
+            <img src="" alt="">검색하기
+            <span class="hidden">검색하기</span>
+          </button>
+        </div>
+      </div>
+      <!-- search for img -->
+      <div v-if="isShowResultLists" class="search-img__result">
+        <h4 class="hidden">검색결과</h4>
+        <template v-if="resultLists.length > 0">
+          <div class="search-img__lists">
+            <div v-for="(item, idx) in resultLists" class="search-img__list">
+              <img :src="item.imgPath" alt="">
+              <span class="list-hover">
+                <button @click="showDetail(idx)" type="button" class="btn btn--g">크게보기</button>
+              </span>
+            </div>
+          </div>
+          <Pagination/>
+        </template>
+        <div v-else class="noData">해당 내용과 관련된 이미지가 없습니다.</div>
+      </div>
+      <button @click="goToBack()"  type="button" class="btn btn--g goBack">뒤로가기</button>
+      <!-- result list -->
+      <div v-show="isShowResultImg" class="search-img search-img__view">
+        <h4 class="hidden">선택 이미지 크게보기</h4>
+        <img :src="resultImg" alt="" class="view-img">
+        <div class="search-img__btn-wrapper">
+          <button @click="hiddenDetail" type="button" class="btn btn--g">닫기</button>
+          <button @click="selectImg" type="button" class="btn">선택하기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- result list view larger -->
 </template>
 <script setup>
+  import { ref } from 'vue';
+  
+  const emit = defineEmits(['choice-img'])
+
+  const currentImgSection = ref(0);
+  const isShowImg = ref(false);
+  const isShowResultLists = ref(false);
+  const isShowResultImg = ref(false);
+  const isMethod = ref('');
+  const resultLists = ref([
+    {imgPath:'/images/image_no.png'},
+    {imgPath:'/images/image_no.png'},
+    {imgPath:'/images/image_no.png'},
+    {imgPath:'/images/image_no.png'},
+    {imgPath:'/images/image_no.png'},
+    {imgPath:'/images/image_no.png'},
+  ]);
+  const resultImg = ref('');
+  const goToNext = (method) => {
+    isMethod.value = method;
+    currentImgSection.value = 2;
+  }
+  const goToFirst = () => {
+    if(resultImg.value == '') {
+      console.log('값없음')
+      currentImgSection.value = 0;
+    } else {
+      console.log('값있음')
+      isShowImg.value = true;
+      emit('choice-img', resultImg.value)
+    }
+  }
+  const goToBack = () => {
+    currentImgSection.value = 1; 
+    // reset
+    isMethod.value = '';
+    resultLists.value = [];
+    isShowResultLists.value = false;
+  }
+  const searchImg = () => {
+    if (isMethod == 'local'){
+      searchForLocal();
+    } else if (isMethod == 'imgSite') {
+      searchForImgSite();
+    } else if (isMethod == 'ai') {
+      searchForAi();
+    }
+    // api 연동 해서
+    isShowResultLists.value = true;
+  }
+  const searchForLocal = () => {}
+  const searchForImgSite = () => {}
+  const searchForAi = () => {}
+
+  const showDetail = (idx) => {
+    resultImg.value = resultLists.value[idx].imgPath;
+    isShowResultImg.value = true;
+  }
+  const hiddenDetail = () => {
+    resultImg.value = '';
+    isShowResultImg.value = false;
+  }
+  const selectImg = () => {
+    isShowImg.value = true;
+    // reset
+    currentImgSection.value = 1;
+    isMethod.value = '';
+    resultLists.value = [];
+    isShowResultLists.value = false;
+    isShowResultImg.value = false;
+    emit('choice-img', resultImg.value)
+  }
 
 </script>
-<style lang="scss">
-  
+<style lang="scss" scoped>
+    // image
+  .search-img {
+    background-color: $dark-gray;
+    width: 100%;
+    height: 100%;
+    @include position-center;
+    &__form {
+      margin: 35px 0;
+      text-align: center;
+      color: $white;
+      .search-btn {
+        width: 40px;
+        height: 40px;
+        @include flex-center;
+        background-color: $middle-gray;
+      }
+    }
+    &__input {
+      margin-top: 10px;
+      @include flex-center;
+      box-sizing: border-box;
+      #search-img-txt {
+        padding: 0 10px;
+        height: 40px;
+        width: 280px;
+        border-radius: 0;
+        border: none;
+        margin-right: 10px;
+      }
+    }
+    &__result {
+      text-align: center;
+      height: calc(100% - 152px);
+      overflow-y: auto;
+      padding: 0 30px 30px 30px;
+    }
+    &__lists {
+      display: flex;
+      flex-wrap: wrap;
+      box-sizing: border-box;
+    }
+    &__list {
+      box-sizing: border-box;
+      margin: 10px;
+      width: calc((100% - 60px) / 3);
+      position: relative;
+      img {
+        display: block;
+        width: 100%;;
+      }
+      .list-hover {
+        width: 100%;
+        height: 100%;
+        @include flex-center;
+        position: absolute;
+        top:0;
+        left:0;
+        opacity: 0;
+        visibility: hidden;
+        transition: .2s;
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+      &:hover {
+        .list-hover {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+    }
+    &__view {
+      background-color: #363636da;
+      img {
+        margin-top: 15px;
+        @include position-center;
+        max-width:80%;
+        width:80%;
+      }
+    }
+    &__btn-wrapper {
+      margin: 20px;
+      .btn--g {
+        margin-right: 10px;
+      }
+    }
+    .btn-search-img {
+      @include position-center;
+    }
+    .goBack {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+  }
+  .btn-search-img2 {
+    width: 200px;
+    height: 230px;
+    &__wrapper {
+      @include flex-center;
+      gap: 20px;
+    }
+  }
+
+  // btn
+  .btn-change {
+    margin-bottom: 10px;
+  }
+
+  @media screen and (max-width: 1024px) {
+  .search-img {
+    &__result {
+      padding: 0 10px 10px 10px;
+    }
+    &__list {
+      width: calc((100% - 40px) / 2);
+    }
+  }
+}
+
+  @media screen and (max-width: 480px) {
+  .search-img {
+    &__result {
+      padding: 0 10px 10px 10px;
+    }
+    &__list {
+      width: calc((100% - 20px));
+    }
+    .goBack {
+      top: 10px;
+      left: 10px;
+    }
+  }
+}
 </style>
