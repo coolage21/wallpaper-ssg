@@ -111,6 +111,9 @@ const changeImg = () => {
   @media screen and (max-width: 768px) {
     .ly-main {
       max-width: 95vw;
+      &__right {
+        padding-left: 0;
+      }
     }
     .main {
       flex-direction: column;

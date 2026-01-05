@@ -11,235 +11,372 @@
       <div class="setting__box setting__item" role="group" aria-labelledby="ratio">
         <div id="ratio" class="setting__heading">해상도</div>
         <label for="img-ratio" class="hidden">해상도</label>
-        <select name="resolution" id="img-ratio" class="selectbox2">
-          <option value="일반pc(1920px x 1080px)">일반pc(1920px x 1080px)</option>
-          <option value="일반pc(1920px x 1080px)">일반pc(1920px x 1080px)</option>
-          <option value="일반pc(1920px x 1080px)">일반pc(1920px x 1080px)</option>
-          <option value="일반pc(1920px x 1080px)">일반pc(1920px x 1080px)</option>
-          <option value="일반pc(1920px x 1080px)">일반pc(1920px x 1080px)</option>
+        <select name="resolution" id="img-ratio" class="selectbox2" v-model="selectedRatio">
+          <option v-for="option in ratioData" :value="option">{{ option }}</option>
         </select>
       </div>
       <!-- ratio -->
-            <div class="setting__box setting__item " role="group" aria-labelledby="setting-bg-color">
+      <div class="setting__box setting__item " role="group" aria-labelledby="setting-bg-color">
         <p id="setting-bg-color" class="setting__heading">배경색</p>
         <div class="setting__cont form__color">
           <label for="bg-color" class="hidden">배경색</label>
-          <input title="색 선택" type="color" id="bg-color" class="input--color">
+          <input title="색 선택" type="color" id="bg-color" class="input--color" v-model="bgColor" :disabled="!isShowBgColor">
           <label for="bg-color-txt" class="hidden">색상명</label>
-          <input type="text" id="bg-color-txt" class="input input--small" value="000000">
-          <button class="noColor">
+          <input type="text" id="bg-color-txt" class="input input--small" v-model="inputBgColor" @blur="commitBgColor" @keyup.enter="commitBgColor" :disabled="!isShowBgColor">
+          <button class="noColor" :class="{'noColor--active': !isShowBgColor}" @click="isShowBgColor = !isShowBgColor" >
             <span class="hidden">색 선택안함</span>
           </button>
         </div>
       </div>  
       <!-- background color -->
       <div class="setting__box" role="group" aria-labelledby="setting-img">
-        <button  id="setting-img" class="setting__heading setting__toggle"   aria-expanded="true" aria-controls="img-items">이미지
+        <button  id="setting-img" class="setting__heading setting__toggle"   aria-expanded="true" aria-controls="img-items" @click="toggleImg = !toggleImg">이미지
           <img src="/images/icon_arrow.png" alt="열기">
         </button>
-        <div id="img-items" class="setting__items">
-          <div class="setting__item" role="group" aria-labelledby="img-size">
-            <p class="setting__sub-heading" id="img-size">사이즈</p>
-            <div class="setting__cont">
-              <div>
-                <input type="radio" name="setting__img-size" id="size-to-row" checked>
-                <label for="size-to-row" class="input input--checked">가로로 꽉차게</label>
+        <Transition name="slide">
+          <div id="img-items" class="setting__items" v-show="toggleImg">
+            <div class="setting__item" role="group" aria-labelledby="img-size">
+              <p class="setting__sub-heading" id="img-size">사이즈</p>
+              <div class="setting__cont">
+                <div>
+                  <input type="radio" name="setting__img-size" id="size-to-row" value="row" v-model="imgSize">
+                  <label for="size-to-row" class="input" :class="{'input--checked': imgSize === 'row'}">가로로 꽉차게</label>
+                </div>
+                <div>
+                  <input type="radio" name="setting__img-size" id="size-to-col" value="col" v-model="imgSize">
+                  <label for="size-to-col" class="input" :class="{'input--checked': imgSize === 'col'}">세로로 꽉차게</label>
+                </div>
+                <div>
+                  <input type="radio" name="setting__img-size" id="size-all" value="all" v-model="imgSize">
+                  <label for="size-all" class="input" :class="{'input--checked': imgSize === 'all'}">전체</label>
+                </div>
               </div>
-              <div>
-                <input type="radio" name="setting__img-size" id="size-to-col">
-                <label for="size-to-col" class="input">세로로 꽉차게</label>
+            </div>
+            <div class="setting__item" role="group" aria-labelledby="img-position">
+              <p class="setting__sub-heading" id="img-position">위치</p>
+              <div class="setting__cont">
+                <div>
+                  <input type="radio" name="setting__img-position" id="position-t" value="top" v-model="imgPosition">
+                  <label for="position-t" class="input" :class="{'input--checked': imgPosition === 'top'}">상단</label>
+                </div>
+                <div>
+                  <input type="radio" name="setting__img-position" id="position-c" value="center" v-model="imgPosition">
+                  <label for="position-c" class="input" :class="{'input--checked': imgPosition === 'center'}">중앙</label>
+                </div>
+                <div>
+                  <input type="radio" name="setting__img-position" id="position-b" value="bottom" v-model="imgPosition">
+                  <label for="position-b" class="input" :class="{'input--checked': imgPosition === 'bottom'}">하단</label>
+                </div>
               </div>
-              <div>
-                <input type="radio" name="setting__img-size" id="size-all">
-                <label for="size-all" class="input">전체</label>
+            </div>
+            <div class="setting__item" role="group" aria-labelledby="img-repeat">
+              <p class="setting__sub-heading" id="img-repeat">반복</p>
+              <div  class="setting__cont">
+                <input type="checkbox" id="img-repeat-toggle" v-model="imgRepeat">
+                <label for="img-repeat-toggle" class="toggle">
+                  <span class="toggle__btn" :class="{'toggle__btn--f': !imgRepeat}">
+                   <i></i>
+                  </span>
+                  <span>{{ imgRepeat ? 'true' : 'false' }}</span>
+                </label>
+              </div>
+            </div>    
+            <div class="setting__item" role="group" aria-labelledby="img-design">
+              <p class="setting__sub-heading" id="img-design">디자인</p>
+              <div class="setting__cont">
+                <div class="w-100">
+                  <input type="checkbox" id="img-blur" v-model="imgDesignBlur">
+                  <label for="img-blur" class="input" :class="{'input--checked': imgDesignBlur}">흐림처리</label>
+                </div>
+                <div>
+                  <input type="radio" name="setting__img-deco" id="img-center-w" value="white" v-model="imgDesignCenter">
+                  <label for="img-center-w" class="input" :class="{'input--checked':imgDesignCenter === 'white'}">중앙 희게</label>
+                </div>
+                <div>
+                  <input type="radio" name="setting__img-deco" id="img-center-b" value="black" v-model="imgDesignCenter">
+                  <label for="img-center-b" class="input" :class="{'input--checked':imgDesignCenter === 'black'}">중앙 검게</label>
+                </div>
+                <div>
+                  <input type="radio" name="setting__img-deco" id="img-center-none" value="none" v-model="imgDesignCenter">
+                  <label for="img-center-none" class="input" :class="{'input--checked':imgDesignCenter === 'none'}">없음</label>
+                </div>
               </div>
             </div>
           </div>
-          <div class="setting__item" role="group" aria-labelledby="img-position">
-            <p class="setting__sub-heading" id="img-position">위치</p>
-            <div class="setting__cont">
-              <div>
-                <input type="radio" name="setting__img-position" id="position-t" checked>
-                <label for="position-t" class="input input--checked">상단</label>
-              </div>
-              <div>
-                <input type="radio" name="setting__img-position" id="position-c">
-                <label for="position-c" class="input">중앙</label>
-              </div>
-              <div>
-                <input type="radio" name="setting__img-position" id="position-b">
-                <label for="position-b" class="input">하단</label>
-              </div>
-            </div>
-          </div>
-          <div class="setting__item" role="group" aria-labelledby="img-repeat">
-            <p class="setting__sub-heading" id="img-repeat">반복</p>
-            <div  class="setting__cont">
-              <input type="checkbox" id="img-repeat-toggle">
-              <label for="img-repeat-toggle" class="toggle">
-                <span class="toggle__btn">
-                <i></i>
-              </span>
-                <span>true</span>
-              </label>
-            </div>
-          </div>    
-          <div class="setting__item" role="group" aria-labelledby="img-design">
-            <p class="setting__sub-heading" id="img-design">디자인</p>
-            <div class="setting__cont">
-              <div class="">
-                <input type="checkbox" id="img-blur">
-                <label for="img-blur" class="input">흐림처리</label>
-              </div>
-              <div>
-                <input type="radio" name="setting__img-deco" id="img-center-w">
-                <label for="img-center-w" class="input">중앙 희게</label>
-              </div>
-              <div>
-                <input type="radio" name="setting__img-deco" id="img-center-b">
-                <label for="img-center-b" class="input">중앙 검게</label>
-              </div>
-            </div>
-          </div>
-        </div>
+        </Transition>
       </div> 
       <!-- image -->
       <div class="setting__box" role="group" aria-labelledby="setting-font">
-        <button id="setting-font" class="setting__heading setting__toggle" aria-expanded="true" aria-controls="font-items">
+        <button id="setting-font" class="setting__heading setting__toggle" aria-expanded="true" aria-controls="font-items" @click="toggleFont = !toggleFont">
           폰트
           <img src="/images/icon_arrow.png" alt="열림">
         </button>
-        <div id="font-items" class="setting__items">
-          <div class="setting__item" role="group" aria-labelledby="typeface">
-            <p id="typeface" class="setting__sub-heading">서체</p>
-            <div class="setting__cont">
-              <label for="typeface-design" class="hidden">서체</label>
-              <select id="typeface-design" class="setting__cont selectbox2">
-                <option value="">폰트</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <div class="setting__item" role="group" aria-labelledby="font-size">
-              <p id="font-size" class="setting__sub-heading">크기</p>
+        <Transition name="slide">
+          <div id="font-items" class="setting__items" v-show="toggleFont">
+            <div class="setting__item" role="group" aria-labelledby="typeface">
+              <p id="typeface" class="setting__sub-heading">서체</p>
               <div class="setting__cont">
-                <div>
-                  <label for="font-weight" class="hidden">폰트 굵기</label>
-                  <select id="font-weight" class="setting__cont selectbox2">
-                    <option value="">reguler</option>
-                  </select>
-                </div>
-                <div>
-                  <label for="font-s" class="hidden">폰트 크기</label>
-                  <input type="text" id="font-s" class="input input--small" value="15px">
+                <label for="typeface-design" class="hidden">서체</label>
+                <select id="typeface-design" class="setting__cont selectbox2" v-model="selectedFont">
+                  <option
+                    v-for="font in fonts"
+                    :value="font.value"
+                    :style="{ fontFamily: font.value }"
+                  >
+                    {{ font.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="setting__item" role="group" aria-labelledby="font-size">
+                <p id="font-size" class="setting__sub-heading">크기</p>
+                <div class="setting__cont">
+                  <div>
+                    <label for="font-weight" class="hidden">폰트 굵기</label>
+                    <select id="font-weight" class="setting__cont selectbox2">
+                      <option value="" v-for="weight in selectedFontWeight" :value="weight">{{ weight }}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="font-s" class="hidden">폰트 크기</label>
+                    <input type="number" id="font-s" class="input input--small" v-model="inputFontSize" @blur="commitFontSize" @keyup.enter="commitFontSize" />
+                    px
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="setting__item" role="group" aria-labelledby="font-color">
-            <p id="font-color" class="setting__sub-heading">색상</p>
-            <div class="setting__cont form__color">
-              <label for="font-color-select" class="hidden">색 선택</label>
-              <input title="색 선택" type="color" id="font-color-select" class="input--color">
-              <label for="font-color-txt" class="hidden">색상명</label>
-              <input type="text" id="font-color-txt" class="input input--small" value="000000">
-            </div>
-          </div>
-          <div class="setting__item" role="group" aria-labelledby="font-bg">
-            <p id="font-bg" class="setting__sub-heading">배경</p>
-            <div class="setting__cont form__color">
-              <label for="font-bg-color" class="hidden">배경</label>
-              <input title="배경색" type="color" id="font-bg-color" class="input--color">
-              <label for="font-bg-color-txt" class="hidden">배경색상명</label>
-              <input type="text" id="font-bg-color-txt" class="input input--small" value="000000">
-              <div class="inline-flex">
-                <label for="font-opacity" class="label">투명도:</label>
-                <input type="text" id="font-opacity" value="0%" class="input input--small">
-              </div>
-              <button class="noColor">
-                <span class="hidden">색 선택안함</span>
-              </button>
-            </div>
-          </div>
-            <div class="setting__item" role="group" aria-labelledby="setting-design">
-              <p id="setting-design" class="setting__sub-heading">디자인</p>
-              <div class="setting__cont">
-                <div>
-                  <input type="checkbox" id="font-italic">
-                  <label for="font-italic" class="input">기울이기</label>
-                </div>
-                <div>
-                  <input type="checkbox" id="font-under-line">
-                  <label for="font-under-line" class="input">아래선</label>
-                </div>
+            <div class="setting__item" role="group" aria-labelledby="font-color">
+              <p id="font-color" class="setting__sub-heading">색상</p>
+              <div class="setting__cont form__color">
+                <label for="font-color-select" class="hidden">색 선택</label>
+                <input title="색 선택" type="color" id="font-color-select" class="input--color" v-model="fontColor">
+                <label for="font-color-txt" class="hidden">색상명</label>
+                <input type="text" id="font-color-txt" class="input input--small" v-model="inputFontColor" @blur="commitFontColor" @keyup.enter="commitFontColor">
               </div>
             </div>
-          
-        </div>
-      </div>
-      <!-- font -->
-      <div class="setting__box" role="group" aria-labelledby="setting-box">
-        <button id="setting-box" class="setting__heading setting__toggle" aria-expanded="true" aria-controls="box-items">
-          네모박스
-          <img src="/images/icon_arrow.png" alt="열림">
-        </button>
-        <div id="box-items" class="setting__items">
-          <div class="setting__item">
-            <p class="setting__sub-heading">박스 추가</p>
-            <div class="setting__cont">
-              <input type="checkbox" id="box-toggle">
-              <label for="box-toggle" class="toggle">
-                <span class="toggle__btn">
-                  <i></i>
-                </span>
-                <span>true</span>
-              </label>
-            </div>
-          </div>
-          <div class="setting__item" role="group" aria-labelledby="box-bg">
-            <p id="box-bg" class="setting__sub-heading">색상</p>
-            <div class="setting__cont form__color">
-                <label for="box-bg-color" class="hidden">배경</label>
-                <input title="배경색" type="color" id="box-bg-color" class="input--color">
-                <label for="box-bg-color-txt" class="hidden">배경색상명</label>
-                <input type="text" id="box-bg-color-txt" class="input input--small" value="000000">
+            <div class="setting__item" role="group" aria-labelledby="font-bg">
+              <p id="font-bg" class="setting__sub-heading">배경</p>
+              <div class="setting__cont form__color">
+                <label for="font-bg-color" class="hidden">배경</label>
+                <input title="배경색" type="color" id="font-bg-color" class="input--color" v-model="fontBgColor" :disabled="!isShowFontBgColor">
+                <label for="font-bg-color-txt" class="hidden">배경색상명</label>
+                <input type="text" id="font-bg-color-txt" class="input input--small" v-model="inputFontBgColor" @blur="commitFontBgColor" @keyup.enter="commitFontBgColor" :disabled="!isShowFontBgColor">
                 <div class="inline-flex">
-                  <label for="box-opacity" class="label">투명도:</label>
-                  <input type="text" id="box-opacity" value="0%" class="input input--small">
+                  <label for="font-opacity" class="label">투명도(%):</label>
+                  <input type="number" id="font-opacity" class="input input--small" v-model="inputFontBgColorOpacity" @blur="commitFontBgColorOpacity" @keyup.enter="commitFontBgColorOpacity" :disabled="!isShowFontBgColor">
                 </div>
-                <button class="noColor">
+                <button class="noColor" :class="{'noColor--active': !isShowFontBgColor}" @click="isShowFontBgColor = !isShowFontBgColor">
                   <span class="hidden">색 선택안함</span>
                 </button>
               </div>
-          </div>
-          <div class="setting__item" role="group" aria-labelledby="box-size">
-            <p id="box-size" class="setting__sub-heading">크기</p>
-            <div class="setting__cont">
-              <div class="inline-flex">
-                <label for="box-row">가로(px) :</label>
-                <input id="box-row" type="text" class="input input--small"> 
+            </div>
+              <div class="setting__item" role="group" aria-labelledby="setting-design">
+                <p id="setting-design" class="setting__sub-heading">디자인</p>
+                <div class="setting__cont">
+                  <div>
+                    <input type="checkbox" id="font-italic" v-model="fontItalic" >
+                    <label for="font-italic" class="input" :class="{'input--checked':fontItalic}">기울이기</label>
+                  </div>
+                  <div>
+                    <input type="checkbox" id="font-under-line" v-model="fontUnderLine">
+                    <label for="font-under-line" class="input" :class="{'input--checked':fontUnderLine}">아래선</label>
+                  </div>
+                </div>
               </div>
-              <div class="inline-flex">
-                <label for="box-col">세로(px) :</label>
-                <input id="box-col" type="text" class="input input--small"> 
+            
+          </div>
+        </Transition>
+      </div>
+      <!-- font -->
+      <div class="setting__box" role="group" aria-labelledby="setting-box">
+        <button id="setting-box" class="setting__heading setting__toggle" aria-expanded="true" aria-controls="box-items" @click="toggleBox = !toggleBox">
+          네모박스
+          <img src="/images/icon_arrow.png" alt="열림">
+        </button>
+        <Transition name="slide">
+          <div id="box-items" class="setting__items" v-show="toggleBox">
+            <div class="setting__item">
+              <p class="setting__sub-heading">박스 추가</p>
+              <div class="setting__cont">
+                <input type="checkbox" id="box-toggle" v-model="addBox">
+                <label for="box-toggle" class="toggle">
+                  <span class="toggle__btn" :class="{'toggle__btn--f': !addBox}">
+                    <i></i>
+                  </span>
+                  <span>{{ addBox ? 'true' : 'false' }}</span>
+                </label>
+              </div>
+            </div>
+            <div class="setting__item" role="group" aria-labelledby="box-bg">
+              <p id="box-bg" class="setting__sub-heading">색상</p>
+              <div class="setting__cont form__color">
+                  <label for="box-bg-color" class="hidden">배경</label>
+                  <input title="배경색" type="color" id="box-bg-color" class="input--color" :disabled="!addBox" v-model="boxColor" >
+                  <label for="box-bg-color-txt" class="hidden">배경색상명</label>
+                  <input type="text" id="box-bg-color-txt" class="input input--small" v-model="inputBoxColor" @blur="commitBoxColor" @keyup.enter="commitBoxColor" :disabled="!addBox" >
+                  <div class="inline-flex">
+                    <label for="box-opacity" class="label">투명도(%):</label>
+                    <input type="number" id="box-opacity" class="input input--small" v-model="inputBoxColorOpacity" @blur="commitBoxColorOpacity" @keyup.enter="commitBoxColorOpacity" :disabled="!addBox">
+                  </div>
+                </div>
+            </div>
+            <div class="setting__item" role="group" aria-labelledby="box-size">
+              <p id="box-size" class="setting__sub-heading">크기</p>
+              <div class="setting__cont">
+                <div class="inline-flex">
+                  <label for="box-row">가로(px) :</label>
+                  <input id="box-row" type="number" class="input input--small" v-model="inputBoxWidth" @blur="commitBoxWidth" @keyup.enter="commitBoxWidth"  :disabled="!addBox"> 
+                </div>
+                <div class="inline-flex">
+                  <label for="box-col">세로(px) :</label>
+                  <input id="box-col" type="number" class="input input--small" v-model="inputBoxHeight" @blur="commitBoxHeight" @keyup.enter="commitBoxHeight"  :disabled="!addBox"> 
+                </div>
+              </div>
+            </div>
+            <div class="setting__item" role="group" aria-labelledby="box-rounding">
+              <p id="box-rounding" class="setting__sub-heading">라운드처리</p>
+              <div class="setting__cont">
+                <label for="rounding-px" class="hidden">라운드 픽셀값</label>
+                <input id="rounding-px" type="number" class="input input--small" v-model="inputBoxRounding" @blur="commitBoxRounding" @keyup.enter="commitBoxRounding"  :disabled="!addBox">
+                <span>px</span>
               </div>
             </div>
           </div>
-          <div class="setting__item" role="group" aria-labelledby="box-rounding">
-            <p id="box-rounding" class="setting__sub-heading">라운드처리</p>
-            <div class="setting__cont">
-              <label for="rounding-px" class="hidden">라운드 픽셀값</label>
-              <input id="rounding-px" type="text" class="input input--small">
-              <span>px</span>
-            </div>
-          </div>
-        </div>
+        </Transition>
       </div>
       <!-- square box -->
     </div>
   </section>
 </template>
 <script setup>
+  import { ref, watch } from 'vue';
+  import {storeToRefs} from 'pinia';
+  import {useEditorStore} from './../../stores/editor';
+  import { useFonts } from './../../composables/useFonts'
+  const { fonts, selectedFont } = useFonts();
+  
+  // toggle
+  const toggleImg = ref(true);
+  const toggleFont = ref(true);
+  const toggleBox = ref(true);
+ 
+  // 실행취소, 되돌리기
+  
+  // pinia
+  const editorStore = useEditorStore()
+  const {
+    saveData, // 임시저장
+    selectedRatio, // 해상도
+    ratioData, // 해상도
+    // 배경색
+    bgColor,
+    isShowBgColor,
+    // 이미지
+    imgSize, //row, col, all
+    imgPosition, // top, bottom, center
+    imgRepeat,
+    imgDesignBlur,
+    imgDesignCenter, // white, black, none
+    // 폰트
+    font,
+    fontSize,
+    fontWeight, // 폰트에 따라 상이
+    fontColor,
+    fontBgColor,
+    fontBgColorOpacity, // 0 ~ 100
+    isShowFontBgColor,
+    fontItalic,
+    fontUnderLine,
+    // 네모박스
+    addBox,
+    boxColor,
+    boxColorOpacity, // 0 ~ 100
+    boxWidth,
+    boxHeight,
+    boxRounding,
+  } = storeToRefs(editorStore);
+
+  const selectedFontWeight = ref('');
+  const weightTxt = ref({'300':'light', '400':'reguler', '500':'medium', '600':'semi bold', '700':'bold', '800':'extra bold'})
+  watch(selectedFont, () => {
+    let searchFont = fonts.value.find(f => f.value === selectedFont.value);
+    if(searchFont) {
+      let w = searchFont.weight
+      selectedFontWeight.value = weightTxt.value[String(w)];
+    }
+  })
+
+  const inputFontSize = ref(fontSize.value);
+  const commitFontSize = () => {
+  fontSize.value = inputFontSize.value
+  }
+  watch(fontSize, v => (inputFontSize.value = v))
+  
+  // input 관련 함수
+  // 배경색
+  const inputBgColor = ref(bgColor.value);
+  const commitBgColor = () => {
+    bgColor.value = inputBgColor.value;
+  }
+  watch(bgColor, v => (inputBgColor.value = v))
+  
+  // 폰트 배경색
+  const inputFontColor = ref(fontColor.value);
+  const commitFontColor = () => {
+    fontColor.value = inputFontColor.value;
+  }
+  watch(fontColor, v => (inputFontColor.value = v))
+ 
+  // 폰트 배경색
+  const inputFontBgColor = ref(fontBgColor.value);
+  const commitFontBgColor = () => {
+    fontBgColor.value = inputFontBgColor.value;
+  }
+  watch(fontBgColor, v => (inputFontBgColor.value = v))
+  
+  // 폰트 배경색 투명도
+  const inputFontBgColorOpacity = ref(fontBgColorOpacity.value);
+  const commitFontBgColorOpacity = () => {
+    fontBgColorOpacity.value = inputFontBgColorOpacity.value;
+  }
+  watch(fontBgColorOpacity, v => (inputFontBgColorOpacity.value = v))
+  
+  // 네모박스 배경색
+  const inputBoxColor = ref(boxColor.value);
+  const commitBoxColor = () => {
+    boxColor.value = inputBoxColor.value;
+  }
+  watch(boxColor, v => (inputBoxColor.value = v))
+  
+  // 네모박스 배경색 투명도
+  const inputBoxColorOpacity = ref(boxColorOpacity.value);
+  const commitBoxColorOpacity = () => {
+    boxColorOpacity.value = inputBoxColorOpacity.value;
+  }
+  watch(boxColorOpacity, v => (inputBoxColorOpacity.value = v))
+  
+  // 네모박스 크기(가로)
+  const inputBoxWidth = ref(boxWidth.value);
+  const commitBoxWidth = () => {
+    boxWidth.value = inputBoxWidth.value;
+  }
+  watch(boxWidth, v => (inputBoxWidth.value = v))
+  
+  // 네모박스 크기(세로)
+  const inputBoxHeight = ref(boxHeight.value);
+  const commitBoxHeight = () => {
+    boxHeight.value = inputBoxHeight.value;
+  }
+  watch(boxHeight, v => (inputBoxHeight.value = v))
+  
+  // 네모박스 크기(라운드)
+  const inputBoxRounding = ref(boxRounding.value);
+  const commitBoxRounding = () => {
+    boxRounding.value = inputBoxRounding.value;
+  }
+  watch(boxRounding, v => (inputBoxRounding.value = v))
+
 
 </script>
 <style lang="scss" scoped>
@@ -252,7 +389,6 @@
     max-height: 86vh;
     &__box {
       border-bottom: 1px solid $silver-gray;
-      // border: 1px solid purple;
        padding: 10px 0;
        &:last-child {
          border:none;
@@ -275,6 +411,7 @@
       align-items: center;
       font-size: 14px;
       gap: 7px;
+      flex-wrap: wrap;
       input[type=radio], input[type=checkbox] {
         opacity: 0;
         position: absolute;
