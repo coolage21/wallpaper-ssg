@@ -19,10 +19,11 @@ export const useEditorStore = defineStore('editor', () => {
     const imgDesignBlur = ref(false);
     const imgDesignCenter = ref('none'); // white, black, none
     // 폰트
-    const font = ref('');
-    const fontSize = ref('');
-    const fontWeight = ref(''); // 폰트에 따라 상이
-    const fontColor = ref('');
+    const font = ref([]);
+    const selectedFont = ref('');
+    const fontSize = ref('16');
+    const selectedFontWeight = ref(''); // 폰트에 따라 상이
+    const fontColor = ref('#000000');
     const fontBgColor = ref('');
     const fontBgColorOpacity = ref(''); // 0 ~ 100
     const isShowFontBgColor = ref(false);
@@ -30,23 +31,40 @@ export const useEditorStore = defineStore('editor', () => {
     const fontUnderLine = ref(false);
     // 네모박스
     const addBox = ref(false);
-    const boxColor = ref('');
-    const boxColorOpacity = ref(''); // 0 ~ 100
-    const boxWidth = ref('');
-    const boxHeight = ref('');
-    const boxRounding = ref('');
+    const boxColor = ref('#fff');
+    const boxColorOpacity = ref('100'); // 0 ~ 100
+    const boxWidth = ref('100');
+    const boxHeight = ref('100');
+    const boxRounding = ref('0');
 
     // 받아오는 것 (해상도)
     ratioData.value = [
       '일반pc (1920px x 1080px)',
-      'ppt4:5 (1600px x 1200x)',
+      'ppt5/4 (1600px x 1200x)',
       '아이패드4:3 (2048px x 1536px)',
       '갤럭시탭16:10 (1920px x 1200px)',
-      '모바일9:20 (1080px x 2400)',
+      '모바일9:20 (1080px x 2400px)',
     ]
     // 받아오는 것 (폰트, 폰트에 따른 굵기)
     selectedRatio.value = ratioData.value[0]
 
+    // 폰트 데이터
+    font.value = [
+    { label: '프리텐다드체', value: 'Pretendard', weight: [
+      { value: 300, label: 'Light' },  { value: 400, label: 'Regular' }, { value: 500, label: 'Medium' }, { value: 700, label: 'Semi Bold' },   { value: 700, label: 'Bold' }, ] },
+    { label: '마루부리체', value: 'MaruBuri', weight: [  { value: 300, label: 'Light' },
+      { value: 400, label: 'Regular' },
+      { value: 500, label: 'Medium' },
+      { value: 700, label: 'Bold' },] },
+    { label: '대구북성로체', value: 'DeaguBukseongro', weight: [  { value: 300, label: 'Light' },
+      { value: 800, label: 'ExtraBold' },] },
+    { label: '조선천년체', value: 'ChosunCentennial', weight: [{ value: 400, label: 'Regular' },] },
+    ]
+
+    selectedFont.value = font.value[0].value;
+    selectedFontWeight.value = font.value[0].weight[0];
+    console.log(selectedFont.value)
+    console.log(selectedFontWeight.value)
   return {
     saveData, // 임시저장
     ratioData, // 해상도
@@ -62,8 +80,9 @@ export const useEditorStore = defineStore('editor', () => {
     imgDesignCenter,
     // 폰트
     font,
+    selectedFont,
     fontSize,
-    fontWeight,
+    selectedFontWeight,
     fontColor,
     fontBgColor,
     fontBgColorOpacity,

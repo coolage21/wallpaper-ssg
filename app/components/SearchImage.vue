@@ -1,12 +1,12 @@
 <template>
-  <section class="main__img">
+  <section class="main__img search-img__wrapper">
     <h2 class="hidden">이미지 검색 화면</h2>
     <div v-if="currentImgSection == 0" class="search-img">
       <h3 class="hidden">이미지 가져오기 화면</h3>
       <button @click="currentImgSection = 1" type="button" class="btn btn--g btn-search-img">+ 이미지 가져오기</button>
     </div>
     <!-- search img -->
-    <div v-else-if="currentImgSection == 1" class="search-img btn-search-img2__wrapper">
+    <div v-else-if="currentImgSection == 1" class="search-img btn-search-img2__wrapper search-img--dark">
       <h3 class="hidden">이미지 가져오는 방법 선택하기</h3>
       <button @click="goToNext('local')" type="button" class="btn btn-search-img2">내 컴퓨터에서 가져오기</button>
       <button @click="goToNext('imgSite')" type="button" class="btn btn-search-img2">무료 이미지 사이트에서<br/>검색하기</button>
@@ -14,7 +14,7 @@
       <button @click="goToFirst()" type="button" class="btn btn--g goBack">뒤로가기</button>
     </div>
     <!-- search img methods -->
-    <div v-else-if="currentImgSection == 2" class="search-img">
+    <div v-else-if="currentImgSection == 2" class="search-img search-img--dark">
       <h3 class="hidden">이미지 검색하기</h3>
       <div class="search-img__form">
         <h4 class="hidden">이미지 검색창</h4>
@@ -135,12 +135,17 @@
 
 </script>
 <style lang="scss" scoped>
-    // image
+  // image
   .search-img {
-    background-color: $dark-gray;
     width: 100%;
     height: 100%;
     @include position-center;
+    &--dark{
+      background-color: $dark-gray;
+    } 
+    &__wrapper {
+      background-color: $dark-gray;
+    }
     &__form {
       margin: 35px 0;
       text-align: center;

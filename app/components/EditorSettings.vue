@@ -119,7 +119,7 @@
                 <label for="typeface-design" class="hidden">서체</label>
                 <select id="typeface-design" class="setting__cont selectbox2" v-model="selectedFont">
                   <option
-                    v-for="font in fonts"
+                    v-for="font in font"
                     :value="font.value"
                     :style="{ fontFamily: font.value }"
                   >
@@ -134,8 +134,8 @@
                 <div class="setting__cont">
                   <div>
                     <label for="font-weight" class="hidden">폰트 굵기</label>
-                    <select id="font-weight" class="setting__cont selectbox2">
-                      <option value="" v-for="weight in selectedFontWeight" :value="weight">{{ weight }}</option>
+                    <select id="font-weight" class="setting__cont selectbox2" v-model="selectedFontWeight">
+                      <option :value=weight v-for="weight in fontWeightList" >{{ weight.label }}</option>
                     </select>
                   </div>
                   <div>
@@ -253,9 +253,7 @@
   import { ref, watch } from 'vue';
   import {storeToRefs} from 'pinia';
   import {useEditorStore} from './../../stores/editor';
-  import { useFonts } from './../../composables/useFonts'
-  const { fonts, selectedFont } = useFonts();
-  
+
   // toggle
   const toggleImg = ref(true);
   const toggleFont = ref(true);
@@ -263,7 +261,7 @@
  
   // 실행취소, 되돌리기
   
-  // pinia
+  // pinia store
   const editorStore = useEditorStore()
   const {
     saveData, // 임시저장
@@ -280,8 +278,9 @@
     imgDesignCenter, // white, black, none
     // 폰트
     font,
+    selectedFont,
     fontSize,
-    fontWeight, // 폰트에 따라 상이
+    selectedFontWeight, // 폰트에 따라 상이
     fontColor,
     fontBgColor,
     fontBgColorOpacity, // 0 ~ 100
@@ -297,23 +296,19 @@
     boxRounding,
   } = storeToRefs(editorStore);
 
-  const selectedFontWeight = ref('');
-  const weightTxt = ref({'300':'light', '400':'reguler', '500':'medium', '600':'semi bold', '700':'bold', '800':'extra bold'})
+  const fontWeightList = ref([]);
+  fontWeightList.value = font.value[0].weight;
   watch(selectedFont, () => {
-    let searchFont = fonts.value.find(f => f.value === selectedFont.value);
+    let searchFont = font.value.find(f => f.value === selectedFont.value);
     if(searchFont) {
-      let w = searchFont.weight
-      selectedFontWeight.value = weightTxt.value[String(w)];
+      let w = searchFont.weight;
+      fontWeightList.value = w;
     }
   })
 
-  const inputFontSize = ref(fontSize.value);
-  const commitFontSize = () => {
-  fontSize.value = inputFontSize.value
-  }
-  watch(fontSize, v => (inputFontSize.value = v))
   
   // input 관련 함수
+  watch(fontSize, v => (inputFontSize.value = v))
   // 배경색
   const inputBgColor = ref(bgColor.value);
   const commitBgColor = () => {
@@ -321,7 +316,12 @@
   }
   watch(bgColor, v => (inputBgColor.value = v))
   
-  // 폰트 배경색
+  // 폰트 크기
+  const inputFontSize = ref(fontSize.value);
+  const commitFontSize = () => {
+  fontSize.value = inputFontSize.value
+  }
+  // 폰트 색
   const inputFontColor = ref(fontColor.value);
   const commitFontColor = () => {
     fontColor.value = inputFontColor.value;

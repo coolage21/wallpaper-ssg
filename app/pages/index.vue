@@ -1,9 +1,11 @@
 <template>
   <main class="ly-main main">
     <div class="ly-main__left">
-      <SearchImage v-show="!isShowEditorCanvas"
-       :aria-hidden="isShowEditorCanvas" @choice-img="resultImg"/>
-      <EditorCanvas v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas" :imgSrc="imgSrc" :quoteData="quoteData" />
+      <div class="main__img-wrapper" :style="{'aspect-ratio': ratio}" :class="{mobile : mobileSize}">
+        <SearchImage v-show="!isShowEditorCanvas"
+         :aria-hidden="isShowEditorCanvas" @choice-img="resultImg"/>
+        <EditorCanvas v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas" :imgSrc="imgSrc" :quoteData="quoteData.split('\n')" />
+      </div>
       <button v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas"  @click="changeImg" type="button" class="btn btn--g btn-change">이미지 변경하기</button>
       <section class="main__txt">
         <h2 class="hidden">
@@ -30,7 +32,45 @@
   </main>
 </template>
 <script setup>
-import { ref, unref } from 'vue'
+import { ref, watch } from 'vue'
+import { useEditorStore } from './../../stores/editor';
+
+// pinia store (이미지 여기서 고려해야할까 고민해보기...)
+const editorStore = useEditorStore()
+const {
+  selectedRatio,
+  ratioData
+} = storeToRefs(editorStore);
+
+// 해상도에 맞은 비율 사이즈
+const ratio = ref('');
+const mobileSize = ref(false);
+const changeRatio = () => {
+  if (selectedRatio.value == ratioData.value[0]){
+    ratio.value='16/9'
+    mobileSize.value = false;
+  } else if (selectedRatio.value == ratioData.value[1]) {
+    ratio.value='5/4'
+    mobileSize.value = false;
+  } else if (selectedRatio.value == ratioData.value[2]) {
+    ratio.value='4/3'
+    mobileSize.value = false;
+  } else if (selectedRatio.value == ratioData.value[3]) {
+    ratio.value='16/10'
+    mobileSize.value = false;
+  } else if (selectedRatio.value == ratioData.value[4]) {
+    ratio.value='16/9'
+    mobileSize.value = true;
+   
+  }
+}
+if(selectedRatio.value && ratioData.value){
+  changeRatio();
+}
+watch(selectedRatio, ()=> {
+  changeRatio();
+})
+
 const normalizeToString = (v) => {
   if (typeof v === 'string') return v
   if (v?.value && typeof v.value === 'string') return v.value
@@ -38,25 +78,31 @@ const normalizeToString = (v) => {
   return ''
 }
 
-
 const isModalOpen = ref(false);
 const isShowEditorCanvas = ref(false);
 const quoteData = ref('');
 const imgSrc = ref('');
-const BibleTxt = (value) => {
-  quoteData.value = normalizeToString(value)
-  
-}
+
+// 이미지 검색, 결과 분기
 const resultImg = (value) => {
   imgSrc.value = value;
   isShowEditorCanvas.value = true;
 }
-const updateQuote = (e) => {
-  quoteData.value =  e.target.value;
-}
 const changeImg = () => {
   isShowEditorCanvas.value = false;
 }
+
+// 텍스트
+const BibleTxt = (value) => {
+  quoteData.value = normalizeToString(value)  
+}
+const updateQuote = (e) => {
+  quoteData.value =  e.target.value;
+}
+
+// 해상도 사이즈에 따라 캔버스 사이즈 변경 처리 필요
+ratio
+
 </script>
 <style lang="scss" scoped>
   .ly-main {
@@ -68,23 +114,34 @@ const changeImg = () => {
       padding-left: 30px;
       flex: 1;
       height: 86vh; // 버튼 위치를 고정시키기 위해
-      position: relative;
+      overflow: hidden;
     }
   }
   :deep(.main__img) {
-    position: relative;
-    margin-bottom: 23px;
-    width: 1000px;
-    max-width: 65vw;
-    aspect-ratio: 16/9;
-    background-color: $white;
+    // background-color: $white;
+    width: 100%;
+    height: 100%;
   }  
+  :deep(.mobile .main__img){
+    width: fit-content;
+    height: 72vh;
+    aspect-ratio: 9/20;
+    margin: 0 auto;
+  }
   .main {
     &__txt {
       display: flex;
       #mainTxt {
         width: 100%;
       }
+    }
+    &__img-wrapper {
+      position: relative;
+      // background-color: $white;
+      aspect-ratio: 16/9;
+      max-width: 65vw;
+      width: 900px;
+      margin-bottom: 23px;
     }
   }
   //button
