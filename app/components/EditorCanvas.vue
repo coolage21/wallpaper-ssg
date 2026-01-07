@@ -7,7 +7,7 @@
     <div class="canvas__center" :style="centerStyle"></div>
     <div class="canvas__box" :style="boxStyle"></div>
     <div class="canvas__txt" :style="fontStyle">
-      <template v-for="(line, index) in props.quoteData" :key="index" >
+      <template v-for="(line, index) in quoteData" :key="index" >
       <span>{{ line }}</span>
       <br />
     </template>
@@ -46,6 +46,9 @@
     boxWidth,
     boxHeight,
     boxRounding,
+    // 데이터
+    imgUrl,
+    quoteData,
   } = storeToRefs(editorStore)
 
   const fontStyle = computed(()=> ({
@@ -69,23 +72,11 @@
     borderRadius : `${boxRounding.value}px`,
   }))
 
-
-  // 콘텐츠는 props
-  const props = defineProps({
-    imgSrc: {
-      type: String,
-      required: false
-    },
-    quoteData: {
-    type: Array,
-    required: false
-    }
-  })
-  const imgimg = ref('https://picsum.photos/700/700');
+  const imgimg = ref('https://picsum.photos/700/700'); 
   // 에디터 수정내용은 pinia
   const bgStyle = computed(()=> ({
     backgroundColor: isShowBgColor.value ? bgColor.value : 'transparent',
-    backgroundImage: `url(${imgimg.value})`,
+    backgroundImage: `url(${imgUrl.value})`,// imgimg.value
     backgroundSize: objectFit.value,
     backgroundRepeat: imgRepeat.value ? 'repeat' : 'no-repeat', // repeat / no-repeat
     backgroundPosition: imgPosition.value,

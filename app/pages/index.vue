@@ -4,7 +4,7 @@
       <div class="main__img-wrapper" :style="{'aspect-ratio': ratio}" :class="{mobile : mobileSize}">
         <SearchImage v-show="!isShowEditorCanvas"
          :aria-hidden="isShowEditorCanvas" @choice-img="resultImg"/>
-        <EditorCanvas v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas" :imgSrc="imgSrc" :quoteData="quoteData.split('\n')" />
+        <EditorCanvas v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas" :imgSrc="imgSrc"  />
       </div>
       <button v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas"  @click="changeImg" type="button" class="btn btn--g btn-change">이미지 변경하기</button>
       <section class="main__txt">
@@ -12,7 +12,7 @@
           글 작성하기
         </h2>
         <label for="main-txt" class="hidden">문구</label>
-        <textarea name="main-txt" id="main-txt" class="textarea" placeholder="이미지에 추가할 텍스트를 입력해주세요" :value="quoteData" @input="updateQuote" ></textarea>
+        <textarea name="main-txt" id="main-txt" class="textarea" placeholder="이미지에 추가할 텍스트를 입력해주세요" :value="txtData" @input="updateQuote" ></textarea>
         <button @click="isModalOpen = true" type="button" class="btn btn--w btn-search-bible">성경구절 찾기</button>
       </section>
      
@@ -39,7 +39,8 @@ import { useEditorStore } from './../../stores/editor';
 const editorStore = useEditorStore()
 const {
   selectedRatio,
-  ratioData
+  ratioData,
+  quoteData,
 } = storeToRefs(editorStore);
 
 // 해상도에 맞은 비율 사이즈
@@ -80,12 +81,11 @@ const normalizeToString = (v) => {
 
 const isModalOpen = ref(false);
 const isShowEditorCanvas = ref(false);
-const quoteData = ref('');
+const txtData = ref('');
 const imgSrc = ref('');
 
 // 이미지 검색, 결과 분기
-const resultImg = (value) => {
-  imgSrc.value = value;
+const resultImg = () => {
   isShowEditorCanvas.value = true;
 }
 const changeImg = () => {
@@ -94,10 +94,12 @@ const changeImg = () => {
 
 // 텍스트
 const BibleTxt = (value) => {
-  quoteData.value = normalizeToString(value)  
+  txtData.value = normalizeToString(value)  
+  quoteData.value = txtData.value.split('\n')
 }
 const updateQuote = (e) => {
-  quoteData.value =  e.target.value;
+  txtData.value =  e.target.value;
+  quoteData.value = txtData.value.split('\n')
 }
 
 // 해상도 사이즈에 따라 캔버스 사이즈 변경 처리 필요
@@ -114,7 +116,7 @@ ratio
       padding-left: 30px;
       flex: 1;
       height: 86vh; // 버튼 위치를 고정시키기 위해
-      overflow: hidden;
+      position: relative;
     }
   }
   :deep(.main__img) {

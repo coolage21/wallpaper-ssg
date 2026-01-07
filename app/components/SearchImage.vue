@@ -8,7 +8,11 @@
     <!-- search img -->
     <div v-else-if="currentImgSection == 1" class="search-img btn-search-img2__wrapper search-img--dark">
       <h3 class="hidden">이미지 가져오는 방법 선택하기</h3>
-      <button @click="goToNext('local')" type="button" class="btn btn-search-img2">내 컴퓨터에서 가져오기</button>
+      <!-- <button @click="goToNext('local')" type="button" class="btn btn-search-img2">내 컴퓨터에서 가져오기</button> -->
+       <div class="my-local">
+         <label for="my-local" class="btn btn-search-img2">내 컴퓨터에서 가져오기</label>
+         <input type="file" accept="image/*" @change="onFileChange" id="my-local"/>
+       </div>
       <button @click="goToNext('imgSite')" type="button" class="btn btn-search-img2">무료 이미지 사이트에서<br/>검색하기</button>
       <button @click="goToNext('ai')" type="button" class="btn btn-search-img2">ai로 만들기(chatGpt)</button>
       <button @click="goToFirst()" type="button" class="btn btn--g goBack">뒤로가기</button>
@@ -61,7 +65,12 @@
 </template>
 <script setup>
   import { ref } from 'vue';
-  
+  import { useEditorStore } from './../../stores/editor';
+  const editorStore = useEditorStore()
+  const {
+    imgUrl,
+  } = storeToRefs(editorStore);
+
   const emit = defineEmits(['choice-img'])
 
   const currentImgSection = ref(0);
@@ -84,12 +93,11 @@
   }
   const goToFirst = () => {
     if(resultImg.value == '') {
-      console.log('값없음')
       currentImgSection.value = 0;
     } else {
-      console.log('값있음')
       isShowImg.value = true;
-      emit('choice-img', resultImg.value)
+      // emit('choice-img', resultImg.value)
+      emit('choice-img')
     }
   }
   const goToBack = () => {
@@ -130,9 +138,20 @@
     resultLists.value = [];
     isShowResultLists.value = false;
     isShowResultImg.value = false;
-    emit('choice-img', resultImg.value)
+    imgUrl.value = resultImg.value;
+    // emit('choice-img', resultImg.value)
+    emit('choice-img')
   }
 
+  // 내컴퓨터에서 가져오기(작업중)
+  const onFileChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // 브라우저에서 임시 URL 생성
+    resultImg.value = URL.createObjectURL(file);
+    selectImg();
+  }
 </script>
 <style lang="scss" scoped>
   // image
@@ -233,9 +252,24 @@
       left: 20px;
     }
   }
+  .my-local {
+    position: relative;
+    #my-local {
+      position: absolute;
+      top:0;
+      left:0;
+      z-index: -1;
+      width: 10px;
+      height: 10px;
+    }
+  }
   .btn-search-img2 {
     width: 200px;
     height: 230px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     &__wrapper {
       @include flex-center;
       gap: 20px;

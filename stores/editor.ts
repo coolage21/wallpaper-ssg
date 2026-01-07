@@ -25,7 +25,7 @@ export const useEditorStore = defineStore('editor', () => {
     const selectedFontWeight = ref(''); // 폰트에 따라 상이
     const fontColor = ref('#000000');
     const fontBgColor = ref('');
-    const fontBgColorOpacity = ref(''); // 0 ~ 100
+    const fontBgColorOpacity = ref('100'); // 0 ~ 100
     const isShowFontBgColor = ref(false);
     const fontItalic = ref(false);
     const fontUnderLine = ref(false);
@@ -37,7 +37,7 @@ export const useEditorStore = defineStore('editor', () => {
     const boxHeight = ref('100');
     const boxRounding = ref('0');
 
-    // 받아오는 것 (해상도)
+    // 해상도 데이터
     ratioData.value = [
       '일반pc (1920px x 1080px)',
       'ppt5/4 (1600px x 1200x)',
@@ -45,7 +45,7 @@ export const useEditorStore = defineStore('editor', () => {
       '갤럭시탭16:10 (1920px x 1200px)',
       '모바일9:20 (1080px x 2400px)',
     ]
-    // 받아오는 것 (폰트, 폰트에 따른 굵기)
+    // 선택된 해상도
     selectedRatio.value = ratioData.value[0]
 
     // 폰트 데이터
@@ -61,10 +61,15 @@ export const useEditorStore = defineStore('editor', () => {
     { label: '조선천년체', value: 'ChosunCentennial', weight: [{ value: 400, label: 'Regular' },] },
     ]
 
+    // 선택된 폰트
     selectedFont.value = font.value[0].value;
+    // 선택된 폰트 굵기
     selectedFontWeight.value = font.value[0].weight[0];
-    console.log(selectedFont.value)
-    console.log(selectedFontWeight.value)
+
+    // 이미지 url
+    const imgUrl = ref('');
+    // 텍스트
+    const quoteData = ref([]);
   return {
     saveData, // 임시저장
     ratioData, // 해상도
@@ -96,5 +101,8 @@ export const useEditorStore = defineStore('editor', () => {
     boxWidth,
     boxHeight,
     boxRounding,
+    // 데이터
+    imgUrl,
+    quoteData,
   }
 })
