@@ -4,7 +4,7 @@
       <div class="main__img-wrapper" :style="{'aspect-ratio': ratio}" :class="{mobile : mobileSize}">
         <SearchImage v-show="!isShowEditorCanvas"
          :aria-hidden="isShowEditorCanvas" @choice-img="resultImg"/>
-        <EditorCanvas v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas" :imgSrc="imgSrc"  />
+        <EditorCanvas v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas" />
       </div>
       <button v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas"  @click="changeImg" type="button" class="btn btn--g btn-change">이미지 변경하기</button>
       <section class="main__txt">
@@ -12,7 +12,7 @@
           글 작성하기
         </h2>
         <label for="main-txt" class="hidden">문구</label>
-        <textarea name="main-txt" id="main-txt" class="textarea" placeholder="이미지에 추가할 텍스트를 입력해주세요" :value="txtData" @input="updateQuote" ></textarea>
+        <textarea name="main-txt" id="main-txt" class="textarea" placeholder="이미지에 추가할 텍스트를 입력해주세요" v-model="inputQuoteData" @blur="commitQuoteData" @keyup.enter="commitQuoteData" ></textarea>
         <button @click="isModalOpen = true" type="button" class="btn btn--w btn-search-bible">성경구절 찾기</button>
       </section>
      
@@ -81,8 +81,7 @@ const normalizeToString = (v) => {
 
 const isModalOpen = ref(false);
 const isShowEditorCanvas = ref(false);
-const txtData = ref('');
-const imgSrc = ref('');
+const inputQuoteData = ref(quoteData.value);
 
 // 이미지 검색, 결과 분기
 const resultImg = () => {
@@ -94,14 +93,13 @@ const changeImg = () => {
 
 // 텍스트
 const BibleTxt = (value) => {
-  txtData.value = normalizeToString(value)  
-  quoteData.value = txtData.value.split('\n')
+  inputQuoteData.value = normalizeToString(value)  
+  quoteData.value = inputQuoteData.value.split('\n')
 }
-const updateQuote = (e) => {
-  txtData.value =  e.target.value;
-  quoteData.value = txtData.value.split('\n')
+const commitQuoteData = () => {
+  editorStore.commitField('quoteData', inputQuoteData.value.split('\n'))
 }
-
+watch(quoteData, v => (inputQuoteData.value =  v.join('\n')  ))
 // 해상도 사이즈에 따라 캔버스 사이즈 변경 처리 필요
 ratio
 

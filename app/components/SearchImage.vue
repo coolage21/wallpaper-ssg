@@ -138,7 +138,10 @@
     resultLists.value = [];
     isShowResultLists.value = false;
     isShowResultImg.value = false;
-    imgUrl.value = resultImg.value;
+    // imgUrl.value = resultImg.value;
+    console.log('tlfgod')
+    editorStore.commitField('imgUrl', resultImg.value)
+    console.log('tlfgod')
     // emit('choice-img', resultImg.value)
     emit('choice-img')
   }

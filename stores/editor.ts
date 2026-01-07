@@ -1,16 +1,28 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
+// redo undo
+const MAX_HISTORY = 20
+
+interface HistoryAction {
+  type: string
+  before: Record<string, any>
+  after: Record<string, any>
+}
+
 export const useEditorStore = defineStore('editor', () => {
-    // 실행취소, 되돌리기
-    
+  // 실행취소, 되돌리기
+  // Undo / Redo
+  const past = ref<HistoryAction[]>([]) // before, after가 있는 배열
+  const future = ref<HistoryAction[]>([]) // before, after가 있는 배열
+  const isRestoring = ref(false)
     // 임시저장
     const saveData = ref('');
     // 해상도
     const ratioData = ref([]);
     const selectedRatio = ref('');
     // 배경색
-    const bgColor = ref('');
+    const bgColor = ref('#ffffff');
     const isShowBgColor = ref(false);
     // 이미지
     const imgSize = ref('row'); //row, col, all
@@ -24,14 +36,14 @@ export const useEditorStore = defineStore('editor', () => {
     const fontSize = ref('16');
     const selectedFontWeight = ref(''); // 폰트에 따라 상이
     const fontColor = ref('#000000');
-    const fontBgColor = ref('');
+    const fontBgColor = ref('#ffffff');
     const fontBgColorOpacity = ref('100'); // 0 ~ 100
     const isShowFontBgColor = ref(false);
     const fontItalic = ref(false);
     const fontUnderLine = ref(false);
     // 네모박스
     const addBox = ref(false);
-    const boxColor = ref('#fff');
+    const boxColor = ref('#ffffff');
     const boxColorOpacity = ref('100'); // 0 ~ 100
     const boxWidth = ref('100');
     const boxHeight = ref('100');
@@ -70,6 +82,103 @@ export const useEditorStore = defineStore('editor', () => {
     const imgUrl = ref('');
     // 텍스트
     const quoteData = ref([]);
+
+
+  // undo 대상 ref 묶기
+  const storeRefs: Record<string, any> = {
+    selectedRatio,
+    // 배경
+    bgColor,
+    isShowBgColor,
+    // 이미지
+    imgSize,
+    imgPosition,
+    imgRepeat,
+    imgDesignBlur,
+    imgDesignCenter,
+    // 폰트
+    selectedFont,
+    fontSize,
+    selectedFontWeight,
+    fontColor,
+    fontBgColor,
+    fontBgColorOpacity,
+    isShowFontBgColor,
+    fontItalic,
+    fontUnderLine,
+    // 네모박스
+    addBox,
+    boxColor,
+    boxColorOpacity,
+    boxWidth,
+    boxHeight,
+    boxRounding,
+    // 데이터
+    imgUrl,
+    quoteData,
+  }
+
+  const apply = (payload: Record<string, any>) => {
+    Object.keys(payload).forEach((key) => {
+      if (storeRefs[key]) {
+        storeRefs[key].value = payload[key]
+      }
+    })
+  }
+
+  const commit = (action: HistoryAction) => {
+    if (isRestoring.value) return   // 🔴 핵심!!!
+
+    apply(action.after) // 값 적용
+
+    past.value.push(action) // past에 저장
+    if (past.value.length > MAX_HISTORY) past.value.shift() // 20개가 넘어가면 삭제
+
+    future.value = [] // 새로운게 작업 시작되면 다시실행될것은 없어져야함
+  }
+
+  const undo = () => {
+    const action = past.value.pop()
+    if (!action) return
+
+    isRestoring.value = true
+    try {
+      apply(action.before)
+    } finally {
+      isRestoring.value = false
+    }
+    future.value.unshift(action)
+  }
+
+  const redo = () => {
+    const action = future.value.shift()
+    if (!action) return
+
+    isRestoring.value = true
+    try {
+      apply(action.after)
+    } finally {
+      isRestoring.value = false
+    }
+    past.value.push(action)
+  }
+
+  const commitField = <K extends keyof typeof storeRefs>(
+    key: K,
+    newValue: typeof storeRefs[K]['value'],
+    type?: string
+  ) => {
+    if (isRestoring.value) return
+    const oldValue = storeRefs[key].value
+    if (oldValue === newValue) return
+
+    commit({
+      type: type || String(key),
+      before: { [key]: oldValue },
+      after: { [key]: newValue }
+    })
+  }
+
   return {
     saveData, // 임시저장
     ratioData, // 해상도
@@ -104,5 +213,14 @@ export const useEditorStore = defineStore('editor', () => {
     // 데이터
     imgUrl,
     quoteData,
+    // redo, undo
+    commit,
+    commitField,
+    undo,
+    redo,
+    past,
+    future,
+    isRestoring
   }
+  
 })

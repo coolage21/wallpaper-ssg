@@ -3,16 +3,16 @@
     <h2 class="hidden">꾸미기 항목</h2>
     <div class="setting">
       <div class="setting__box setting__cont setting__item ">
-        <button type="button" class="btn2 btn--w">실행취소</button>
-        <button type="button" class="btn2 btn--w">다시실행</button>
+        <button type="button" class="btn2 btn--w" @click="editorStore.undo">실행취소</button>
+        <button type="button" class="btn2 btn--w" @click="editorStore.redo">다시실행</button>
         <button type="button" class="btn2 btn--w">임시저장</button>
         <button type="button" class="btn2 btn--w">임시저장불러오기</button>
       </div>
       <div class="setting__box setting__item" role="group" aria-labelledby="ratio">
         <div id="ratio" class="setting__heading">해상도</div>
         <label for="img-ratio" class="hidden">해상도</label>
-        <select name="resolution" id="img-ratio" class="selectbox2" v-model="selectedRatio">
-          <option v-for="option in ratioData" :value="option">{{ option }}</option>
+        <select name="resolution" id="img-ratio" class="selectbox2"     v-model="inputSelectedRatio" @change="commitSelectedRatio">
+          <option v-for="(option, idx) in ratioData" :value="option" :key="idx">{{ option }}</option>
         </select>
       </div>
       <!-- ratio -->
@@ -20,10 +20,10 @@
         <p id="setting-bg-color" class="setting__heading">배경색</p>
         <div class="setting__cont form__color">
           <label for="bg-color" class="hidden">배경색</label>
-          <input title="색 선택" type="color" id="bg-color" class="input--color" v-model="bgColor" :disabled="!isShowBgColor">
+          <input title="색 선택" type="color" id="bg-color" class="input--color" v-model="inputBgColor" @change="commitBgColor" :disabled="!isShowBgColor">
           <label for="bg-color-txt" class="hidden">색상명</label>
           <input type="text" id="bg-color-txt" class="input input--small" v-model="inputBgColor" @blur="commitBgColor" @keyup.enter="commitBgColor" :disabled="!isShowBgColor">
-          <button class="noColor" :class="{'noColor--active': !isShowBgColor}" @click="isShowBgColor = !isShowBgColor" >
+          <button class="noColor" :class="{'noColor--active': !isShowBgColor}" @click="toggleBgColor" >
             <span class="hidden">색 선택안함</span>
           </button>
         </div>
@@ -39,15 +39,15 @@
               <p class="setting__sub-heading" id="img-size">사이즈</p>
               <div class="setting__cont">
                 <div>
-                  <input type="radio" name="setting__img-size" id="size-to-row" value="row" v-model="imgSize">
+                  <input type="radio" name="setting__img-size" id="size-to-row" value="row" v-model="inputImgSize" @change="commitImgSize">
                   <label for="size-to-row" class="input" :class="{'input--checked': imgSize === 'row'}">가로로 꽉차게</label>
                 </div>
                 <div>
-                  <input type="radio" name="setting__img-size" id="size-to-col" value="col" v-model="imgSize">
+                  <input type="radio" name="setting__img-size" id="size-to-col" value="col" v-model="inputImgSize" @change="commitImgSize">
                   <label for="size-to-col" class="input" :class="{'input--checked': imgSize === 'col'}">세로로 꽉차게</label>
                 </div>
                 <div>
-                  <input type="radio" name="setting__img-size" id="size-all" value="all" v-model="imgSize">
+                  <input type="radio" name="setting__img-size" id="size-all" value="all" v-model="inputImgSize" @change="commitImgSize">
                   <label for="size-all" class="input" :class="{'input--checked': imgSize === 'all'}">전체</label>
                 </div>
               </div>
@@ -56,15 +56,15 @@
               <p class="setting__sub-heading" id="img-position">위치</p>
               <div class="setting__cont">
                 <div>
-                  <input type="radio" name="setting__img-position" id="position-t" value="top" v-model="imgPosition">
+                  <input type="radio" name="setting__img-position" id="position-t" value="top" v-model="inputImgPosition" @change="commitImgPosition">
                   <label for="position-t" class="input" :class="{'input--checked': imgPosition === 'top'}">상단</label>
                 </div>
                 <div>
-                  <input type="radio" name="setting__img-position" id="position-c" value="center" v-model="imgPosition">
+                  <input type="radio" name="setting__img-position" id="position-c" value="center" v-model="inputImgPosition" @change="commitImgPosition">
                   <label for="position-c" class="input" :class="{'input--checked': imgPosition === 'center'}">중앙</label>
                 </div>
                 <div>
-                  <input type="radio" name="setting__img-position" id="position-b" value="bottom" v-model="imgPosition">
+                  <input type="radio" name="setting__img-position" id="position-b" value="bottom" v-model="inputImgPosition" @change="commitImgPosition">
                   <label for="position-b" class="input" :class="{'input--checked': imgPosition === 'bottom'}">하단</label>
                 </div>
               </div>
@@ -72,12 +72,12 @@
             <div class="setting__item" role="group" aria-labelledby="img-repeat">
               <p class="setting__sub-heading" id="img-repeat">반복</p>
               <div  class="setting__cont">
-                <input type="checkbox" id="img-repeat-toggle" v-model="imgRepeat">
+                <input type="checkbox" id="img-repeat-toggle" v-model="inputImgRepeat" @change="commitImgRepeat">
                 <label for="img-repeat-toggle" class="toggle">
-                  <span class="toggle__btn" :class="{'toggle__btn--f': !imgRepeat}">
+                  <span class="toggle__btn" :class="{'toggle__btn--f': !inputImgRepeat}">
                    <i></i>
                   </span>
-                  <span>{{ imgRepeat ? 'true' : 'false' }}</span>
+                  <span>{{ inputImgRepeat ? 'true' : 'false' }}</span>
                 </label>
               </div>
             </div>    
@@ -85,11 +85,11 @@
               <p class="setting__sub-heading" id="img-design">디자인</p>
               <div class="setting__cont">
                 <div class="w-100">
-                  <input type="checkbox" id="img-blur" v-model="imgDesignBlur">
+                  <input type="checkbox" id="img-blur" v-model="inputImgDesignBlur" @change="commitImgDesignBlur">
                   <label for="img-blur" class="input" :class="{'input--checked': imgDesignBlur}">흐림처리</label>
                 </div>
                 <div>
-                  <input type="radio" name="setting__img-deco" id="img-center-w" value="white" v-model="imgDesignCenter">
+                  <input type="radio" name="setting__img-deco" id="img-center-w" value="white" v-model="inputImgDesignCenter" @change="commitImgDesignCenter">
                   <label for="img-center-w" class="input" :class="{'input--checked':imgDesignCenter === 'white'}">중앙 희게</label>
                 </div>
                 <div>
@@ -117,7 +117,7 @@
               <p id="typeface" class="setting__sub-heading">서체</p>
               <div class="setting__cont">
                 <label for="typeface-design" class="hidden">서체</label>
-                <select id="typeface-design" class="setting__cont selectbox2" v-model="selectedFont">
+                <select id="typeface-design" class="setting__cont selectbox2" v-model="inputSelectedFont" @change="commitSelectedFont">
                   <option
                     v-for="font in font"
                     :value="font.value"
@@ -134,7 +134,7 @@
                 <div class="setting__cont">
                   <div>
                     <label for="font-weight" class="hidden">폰트 굵기</label>
-                    <select id="font-weight" class="setting__cont selectbox2" v-model="selectedFontWeight">
+                    <select id="font-weight" class="setting__cont selectbox2" v-model="inputSelectedFontWeight" @change="commitSelectedFontWeight">
                       <option :value=weight v-for="weight in fontWeightList" >{{ weight.label }}</option>
                     </select>
                   </div>
@@ -150,7 +150,7 @@
               <p id="font-color" class="setting__sub-heading">색상</p>
               <div class="setting__cont form__color">
                 <label for="font-color-select" class="hidden">색 선택</label>
-                <input title="색 선택" type="color" id="font-color-select" class="input--color" v-model="fontColor">
+                <input title="색 선택" type="color" id="font-color-select" class="input--color" v-model="inputFontColor" @change="commitFontColor">
                 <label for="font-color-txt" class="hidden">색상명</label>
                 <input type="text" id="font-color-txt" class="input input--small" v-model="inputFontColor" @blur="commitFontColor" @keyup.enter="commitFontColor">
               </div>
@@ -159,7 +159,7 @@
               <p id="font-bg" class="setting__sub-heading">배경</p>
               <div class="setting__cont form__color">
                 <label for="font-bg-color" class="hidden">배경</label>
-                <input title="배경색" type="color" id="font-bg-color" class="input--color" v-model="fontBgColor" :disabled="!isShowFontBgColor">
+                <input title="배경색" type="color" id="font-bg-color" class="input--color" v-model="inputFontBgColor" @change="commitFontBgColor" :disabled="!isShowFontBgColor">
                 <label for="font-bg-color-txt" class="hidden">배경색상명</label>
                 <input type="text" id="font-bg-color-txt" class="input input--small" v-model="inputFontBgColor" @blur="commitFontBgColor" @keyup.enter="commitFontBgColor" :disabled="!isShowFontBgColor">
                 <div class="inline-flex">
@@ -175,11 +175,11 @@
                 <p id="setting-design" class="setting__sub-heading">디자인</p>
                 <div class="setting__cont">
                   <div>
-                    <input type="checkbox" id="font-italic" v-model="fontItalic" >
+                    <input type="checkbox" id="font-italic" v-model="inputFontItalic" @change="commitFontItalic" >
                     <label for="font-italic" class="input" :class="{'input--checked':fontItalic}">기울이기</label>
                   </div>
                   <div>
-                    <input type="checkbox" id="font-under-line" v-model="fontUnderLine">
+                    <input type="checkbox" id="font-under-line" v-model="inputFontUnderLine" @change="commitFontUnderLine">
                     <label for="font-under-line" class="input" :class="{'input--checked':fontUnderLine}">아래선</label>
                   </div>
                 </div>
@@ -199,7 +199,7 @@
             <div class="setting__item">
               <p class="setting__sub-heading">박스 추가</p>
               <div class="setting__cont">
-                <input type="checkbox" id="box-toggle" v-model="addBox">
+                <input type="checkbox" id="box-toggle" v-model="inputAddBox" @change="commitAddBox">
                 <label for="box-toggle" class="toggle">
                   <span class="toggle__btn" :class="{'toggle__btn--f': !addBox}">
                     <i></i>
@@ -212,7 +212,7 @@
               <p id="box-bg" class="setting__sub-heading">색상</p>
               <div class="setting__cont form__color">
                   <label for="box-bg-color" class="hidden">배경</label>
-                  <input title="배경색" type="color" id="box-bg-color" class="input--color" :disabled="!addBox" v-model="boxColor" >
+                  <input title="배경색" type="color" id="box-bg-color" class="input--color" :disabled="!addBox" v-model="inputBoxColor" @change="commitBoxColor" >
                   <label for="box-bg-color-txt" class="hidden">배경색상명</label>
                   <input type="text" id="box-bg-color-txt" class="input input--small" v-model="inputBoxColor" @blur="commitBoxColor" @keyup.enter="commitBoxColor" :disabled="!addBox" >
                   <div class="inline-flex">
@@ -306,74 +306,166 @@
     }
   })
 
-  
   // input 관련 함수
-  watch(fontSize, v => (inputFontSize.value = v))
+  // 해상도
+  const inputSelectedRatio = ref(selectedRatio.value);
+  const commitSelectedRatio = () => {
+    editorStore.commitField('selectedRatio', inputSelectedRatio.value)
+  }
+  watch(selectedRatio, v => (inputSelectedRatio.value = v))
+
   // 배경색
   const inputBgColor = ref(bgColor.value);
   const commitBgColor = () => {
-    bgColor.value = inputBgColor.value;
+    editorStore.commitField('bgColor', inputBgColor.value)
   }
   watch(bgColor, v => (inputBgColor.value = v))
+  // 배경색 유무(추후 수정)
+  const toggleBgColor = () => {
+    editorStore.commit({
+      type: 'toggleBgColor',
+      before: {
+        isShowBgColor: editorStore.isShowBgColor,
+        bgColor: editorStore.bgColor
+      },
+      after: {
+        isShowBgColor: !editorStore.isShowBgColor,
+        bgColor: !editorStore.isShowBgColor
+          ? editorStore.bgColor   // ON → 유지
+          : ''                    // OFF → 제거
+      }
+    })
+  }
+
+  // 이미지 - 사이즈
+  const inputImgSize = ref(imgSize.value);
+  const commitImgSize = () => {
+    editorStore.commitField('imgSize', inputImgSize.value)
+  }
+  watch(imgSize, v => (inputImgSize.value = v))
+
+  // 이미지 - 위치
+  const inputImgPosition = ref(imgPosition.value);
+  const commitImgPosition = () => {
+    editorStore.commitField('imgPosition', inputImgPosition.value)
+  }
+  watch(imgPosition, v => (inputImgPosition.value = v))
+  // 이미지 - 반복
+  const inputImgRepeat = ref(imgRepeat.value);
+  const commitImgRepeat = () => {
+    editorStore.commitField('imgRepeat', inputImgRepeat.value)
+  }
+  watch(imgRepeat, v => (inputImgRepeat.value = v))
   
-  // 폰트 크기
+  // 이미지 - 디자인1
+  const inputImgDesignBlur = ref(imgDesignBlur.value);
+  const commitImgDesignBlur = () => {
+    editorStore.commitField('imgDesignBlur', inputImgDesignBlur.value)
+  }
+  watch(imgDesignBlur, v => (inputImgDesignBlur.value = v))
+  // 이미지 - 디자인2
+  const inputImgDesignCenter = ref(imgDesignCenter.value);
+  const commitImgDesignCenter = () => {
+    editorStore.commitField('imgDesignCenter', inputImgDesignCenter.value)
+  }
+  watch(imgDesignCenter, v => (inputImgDesignCenter.value = v))
+  // 서체
+  const inputSelectedFont = ref(selectedFont.value);
+  const commitSelectedFont = () => {
+    editorStore.commitField('selectedFont', inputSelectedFont.value)
+  }
+  watch(selectedFont, v => (inputSelectedFont.value = v))
+
+  // 폰트 - 굵기
+  const inputSelectedFontWeight = ref(selectedFontWeight.value);
+  const commitSelectedFontWeight = () => {
+    editorStore.commitField('selectedFontWeight', inputSelectedFontWeight.value)
+  }
+  watch(selectedFontWeight, v => (inputSelectedFontWeight.value = v))
+  // 폰트 - 배경유무(추후 수정)
+  // 폰트 - 디자인(기울이기)
+  const inputFontItalic = ref(fontItalic.value);
+  const commitFontItalic = () => {
+    editorStore.commitField('fontItalic', inputFontItalic.value)
+  }
+  watch(fontItalic, v => (inputFontItalic.value = v))
+
+  // 폰트 - 디자인(아래선)
+  const inputFontUnderLine = ref(fontUnderLine.value);
+  const commitFontUnderLine = () => {
+    editorStore.commitField('fontUnderLine', inputFontUnderLine.value)
+  }
+  watch(fontUnderLine, v => (inputFontUnderLine.value = v))
+
+  // 폰트 - 크기
   const inputFontSize = ref(fontSize.value);
   const commitFontSize = () => {
-  fontSize.value = inputFontSize.value
+    editorStore.commitField('fontSize', inputFontSize.value)
   }
-  // 폰트 색
+  watch(fontSize, v => (inputFontSize.value = v))
+
+  // 폰트 - 색
   const inputFontColor = ref(fontColor.value);
   const commitFontColor = () => {
-    fontColor.value = inputFontColor.value;
+    editorStore.commitField('fontColor', inputFontColor.value)
   }
   watch(fontColor, v => (inputFontColor.value = v))
  
-  // 폰트 배경색
+  // 폰트 - 배경색
   const inputFontBgColor = ref(fontBgColor.value);
   const commitFontBgColor = () => {
-    fontBgColor.value = inputFontBgColor.value;
+    editorStore.commitField('fontBgColor', inputFontBgColor.value)
   }
   watch(fontBgColor, v => (inputFontBgColor.value = v))
   
-  // 폰트 배경색 투명도
+  // 폰트 - 배경색 투명도
   const inputFontBgColorOpacity = ref(fontBgColorOpacity.value);
   const commitFontBgColorOpacity = () => {
-    fontBgColorOpacity.value = inputFontBgColorOpacity.value;
+    editorStore.commitField('fontBgColorOpacity', inputFontBgColorOpacity.value)
   }
   watch(fontBgColorOpacity, v => (inputFontBgColorOpacity.value = v))
   
-  // 네모박스 배경색
+
+  // 네모박스 - 추가 유무
+  const inputAddBox = ref(addBox.value);
+  const commitAddBox = () => {
+    editorStore.commitField('addBox', inputAddBox.value)
+  }
+  watch(addBox, v => (inputAddBox.value = v))
+
+  // 네모박스 - 배경색
   const inputBoxColor = ref(boxColor.value);
   const commitBoxColor = () => {
-    boxColor.value = inputBoxColor.value;
+    editorStore.commitField('boxColor', inputBoxColor.value)
+
   }
   watch(boxColor, v => (inputBoxColor.value = v))
   
-  // 네모박스 배경색 투명도
+  // 네모박스 - 배경색 투명도
   const inputBoxColorOpacity = ref(boxColorOpacity.value);
   const commitBoxColorOpacity = () => {
-    boxColorOpacity.value = inputBoxColorOpacity.value;
+    editorStore.commitField('boxColorOpacity', inputBoxColorOpacity.value)
   }
   watch(boxColorOpacity, v => (inputBoxColorOpacity.value = v))
   
-  // 네모박스 크기(가로)
+  // 네모박스 - 크기(가로)
   const inputBoxWidth = ref(boxWidth.value);
   const commitBoxWidth = () => {
-    boxWidth.value = inputBoxWidth.value;
+    editorStore.commitField('boxWidth', inputBoxWidth.value)
   }
   watch(boxWidth, v => (inputBoxWidth.value = v))
   
-  // 네모박스 크기(세로)
+  // 네모박스 - 크기(세로)
   const inputBoxHeight = ref(boxHeight.value);
   const commitBoxHeight = () => {
-    boxHeight.value = inputBoxHeight.value;
+    editorStore.commitField('boxHeight', inputBoxHeight.value)
   }
   watch(boxHeight, v => (inputBoxHeight.value = v))
   
-  // 네모박스 크기(라운드)
+  // 네모박스 - 크기(라운드)
   const inputBoxRounding = ref(boxRounding.value);
   const commitBoxRounding = () => {
-    boxRounding.value = inputBoxRounding.value;
+    editorStore.commitField('boxRounding', inputBoxRounding.value)
   }
   watch(boxRounding, v => (inputBoxRounding.value = v))
 
@@ -389,11 +481,11 @@
     max-height: 86vh;
     &__box {
       border-bottom: 1px solid $silver-gray;
-       padding: 10px 0;
-       &:last-child {
-         border:none;
-         padding-bottom: 0;
-       }
+      padding: 10px 0;
+      &:last-child {
+        border:none;
+        padding-bottom: 0;
+      }
     }
     &__items {
       margin-bottom: -5px;
