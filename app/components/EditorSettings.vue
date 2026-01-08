@@ -5,8 +5,8 @@
       <div class="setting__box setting__cont setting__item ">
         <button type="button" class="btn2 btn--w" @click="editorStore.undo">실행취소</button>
         <button type="button" class="btn2 btn--w" @click="editorStore.redo">다시실행</button>
-        <button type="button" class="btn2 btn--w">임시저장</button>
-        <button type="button" class="btn2 btn--w">임시저장불러오기</button>
+        <button type="button" class="btn2 btn--w"  @click="onSaveDraft">임시저장</button>
+        <button type="button" class="btn2 btn--w" @click="onLoadDraft">임시저장불러오기</button>
       </div>
       <div class="setting__box setting__item" role="group" aria-labelledby="ratio">
         <div id="ratio" class="setting__heading">해상도</div>
@@ -166,7 +166,7 @@
                   <label for="font-opacity" class="label">투명도(%):</label>
                   <input type="number" id="font-opacity" class="input input--small" v-model="inputFontBgColorOpacity" @blur="commitFontBgColorOpacity" @keyup.enter="commitFontBgColorOpacity" :disabled="!isShowFontBgColor">
                 </div>
-                <button class="noColor" :class="{'noColor--active': !isShowFontBgColor}" @click="isShowFontBgColor = !isShowFontBgColor">
+                <button class="noColor" :class="{'noColor--active': !isShowFontBgColor}" @click="toggleFontBgColor">
                   <span class="hidden">색 선택안함</span>
                 </button>
               </div>
@@ -259,10 +259,18 @@
   const toggleFont = ref(true);
   const toggleBox = ref(true);
  
-  // 실행취소, 되돌리기
-  
-  // pinia store
   const editorStore = useEditorStore()
+  // 실행취소, 되돌리기
+  const onSaveDraft = () => {
+  editorStore.saveDraft()
+  alert('임시저장되었습니다.')
+}
+
+const onLoadDraft = () => {
+  editorStore.loadDraft()
+  alert('임시저장을 불러왔습니다.')
+}
+  // pinia store
   const {
     saveData, // 임시저장
     selectedRatio, // 해상도
@@ -326,13 +334,9 @@
       type: 'toggleBgColor',
       before: {
         isShowBgColor: editorStore.isShowBgColor,
-        bgColor: editorStore.bgColor
       },
       after: {
         isShowBgColor: !editorStore.isShowBgColor,
-        bgColor: !editorStore.isShowBgColor
-          ? editorStore.bgColor   // ON → 유지
-          : ''                    // OFF → 제거
       }
     })
   }
@@ -383,6 +387,17 @@
   }
   watch(selectedFontWeight, v => (inputSelectedFontWeight.value = v))
   // 폰트 - 배경유무(추후 수정)
+  const toggleFontBgColor = () => {
+    editorStore.commit({
+      type: 'toggleBgColor',
+      before: {
+        isShowFontBgColor: editorStore.isShowFontBgColor,
+      },
+      after: {
+        isShowFontBgColor: !editorStore.isShowFontBgColor,
+      }
+    })
+  }
   // 폰트 - 디자인(기울이기)
   const inputFontItalic = ref(fontItalic.value);
   const commitFontItalic = () => {

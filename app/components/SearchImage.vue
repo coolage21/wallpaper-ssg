@@ -96,7 +96,6 @@
       currentImgSection.value = 0;
     } else {
       isShowImg.value = true;
-      // emit('choice-img', resultImg.value)
       emit('choice-img')
     }
   }
@@ -138,11 +137,7 @@
     resultLists.value = [];
     isShowResultLists.value = false;
     isShowResultImg.value = false;
-    // imgUrl.value = resultImg.value;
-    console.log('tlfgod')
     editorStore.commitField('imgUrl', resultImg.value)
-    console.log('tlfgod')
-    // emit('choice-img', resultImg.value)
     emit('choice-img')
   }
 

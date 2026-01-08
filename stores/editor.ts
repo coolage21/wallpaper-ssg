@@ -10,6 +10,7 @@ interface HistoryAction {
   after: Record<string, any>
 }
 
+// 데이터
 export const useEditorStore = defineStore('editor', () => {
   // 실행취소, 되돌리기
   // Undo / Redo
@@ -84,7 +85,9 @@ export const useEditorStore = defineStore('editor', () => {
     const quoteData = ref([]);
 
 
-  // undo 대상 ref 묶기
+  // ========================
+  // undo (실행취소, 다시실행)
+  // ========================
   const storeRefs: Record<string, any> = {
     selectedRatio,
     // 배경
@@ -179,6 +182,70 @@ export const useEditorStore = defineStore('editor', () => {
     })
   }
 
+  // ========================
+  // snapshot (임시저장용)
+  // ========================
+
+  const getSnapshot = (): EditorSnapshot => ({
+    selectedRatio: selectedRatio.value,
+
+    bgColor: bgColor.value,
+    isShowBgColor: isShowBgColor.value,
+
+    imgSize: imgSize.value,
+    imgPosition: imgPosition.value,
+    imgRepeat: imgRepeat.value,
+    imgDesignBlur: imgDesignBlur.value,
+    imgDesignCenter: imgDesignCenter.value,
+
+    selectedFont: selectedFont.value,
+    fontSize: fontSize.value,
+    selectedFontWeight: selectedFontWeight.value,
+    fontColor: fontColor.value,
+    fontBgColor: fontBgColor.value,
+    fontBgColorOpacity: fontBgColorOpacity.value,
+    isShowFontBgColor: isShowFontBgColor.value,
+    fontItalic: fontItalic.value,
+    fontUnderLine: fontUnderLine.value,
+
+    addBox: addBox.value,
+    boxColor: boxColor.value,
+    boxColorOpacity: boxColorOpacity.value,
+    boxWidth: boxWidth.value,
+    boxHeight: boxHeight.value,
+    boxRounding: boxRounding.value,
+
+    imgUrl: imgUrl.value,
+    quoteData: quoteData.value,
+  })
+
+  const restoreSnapshot = (snapshot: EditorSnapshot) => {
+    isRestoring.value = true
+    try {
+      apply(snapshot);
+      past.value = []
+      future.value = [] 
+    } finally {
+      isRestoring.value = false
+    }
+  }
+  // ========================
+  // draft persistence
+  // ========================
+
+  const saveDraft = () => {
+    localStorage.setItem(
+      'editor:draft',
+      JSON.stringify(getSnapshot())
+    )
+  }
+
+  const loadDraft = () => {
+    const raw = localStorage.getItem('editor:draft')
+    if (!raw) return
+    restoreSnapshot(JSON.parse(raw))
+  }
+
   return {
     saveData, // 임시저장
     ratioData, // 해상도
@@ -220,7 +287,46 @@ export const useEditorStore = defineStore('editor', () => {
     redo,
     past,
     future,
-    isRestoring
+    isRestoring,
+    // snapshot
+    getSnapshot,
+    restoreSnapshot,
+    // draft
+    saveDraft,
+    loadDraft,
   }
   
 })
+
+// 임시저장용 데이터
+export interface EditorSnapshot {
+  selectedRatio: string
+  bgColor: string
+  isShowBgColor: boolean
+
+  imgSize: string
+  imgPosition: string
+  imgRepeat: boolean
+  imgDesignBlur: boolean
+  imgDesignCenter: string
+
+  selectedFont: string
+  fontSize: string
+  selectedFontWeight: any
+  fontColor: string
+  fontBgColor: string
+  fontBgColorOpacity: string
+  isShowFontBgColor: boolean
+  fontItalic: boolean
+  fontUnderLine: boolean
+
+  addBox: boolean
+  boxColor: string
+  boxColorOpacity: string
+  boxWidth: string
+  boxHeight: string
+  boxRounding: string
+
+  imgUrl: string
+  quoteData: any[]
+}

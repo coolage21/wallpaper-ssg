@@ -174,6 +174,10 @@ ratio
     }
     .main {
       flex-direction: column;
+      &__img-wrapper {
+        max-width: none;
+        width: 100%;
+      }
     }
     :deep(.main__img) {
       max-width: 100%;
@@ -182,17 +186,5 @@ ratio
     .btn-wrapper {
         bottom: 90%;
     }
-  }
-  // .preview {
-  //   height: fit-content;
-  // }
-  // .btn-search-img2 {
-  //   height: 130px;
-  //   padding: 10px;
-  //   &__wrapper {
-  //     gap: 10px;
-  //   }
-  // }
-
-  
+  } 
 </style>
