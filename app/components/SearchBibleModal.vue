@@ -5,23 +5,21 @@
       <form class="bible__search" @submit.prevent="onSearch">
         <div>
           <label for="bible-version" class="hidden">성경 버전</label>
-          <select name="bible-version" id="bible-version" class="selectbox">
-            <option value="개역한글">개역한글</option>
-            <option value="신약">신약</option>
+          <select name="bible-version" id="bible-version" class="selectbox" v-model="selectedBibleVersion">
+            <option value="web">WEB</option>
+            <option value="kjv">KJB</option>
           </select>
         </div>
         <div>
-          <label for="bible-version" class="hidden">신약,구약</label>
-          <select name="bible-version" id="" class="selectbox">
-            <option value="구약">구약</option>
-            <option value="신약">신약</option>
+          <label for="bible-version2" class="hidden">신약,구약</label>
+          <select name="bible-version" id="bible-version2" class="selectbox" v-model="selectedVersion">
+            <option v-for="item in bibleList" :value="item.version">{{item.version}}</option>
           </select>
         </div>
         <div>
           <label for="bible-division" class="hidden">성경</label>
-          <select name="bible-division" id="bible-division" class="selectbox">
-            <option value="마태복음">마태복음</option>
-            <option value="신약">신약</option>
+          <select name="bible-division" id="bible-division" class="selectbox" v-model="selectedBibleName">
+            <option v-for="item in bibleNameList" :value="item.value">{{item.label}}</option>
           </select>
         </div>
         <div role="group" aria-labelledby="range-label" class="bible__range">
@@ -29,33 +27,25 @@
           <div class="verse">
             <div>
               <label for="bible-chapter-start" class="hidden">시작 장</label>
-              <select name="bible-chapter-start" id="bible-verse-start" class="selectbox">
-                <option value="1">1</option>
-              </select>
+              <input type="number" id="bible-chapter-start" class="input2"  v-model="startChapter"/>
             </div>
             <div>
               <label for="bible-verse-start" class="hidden">시작 절</label>
-              <select name="bible-verse-start" id="bible-verse-start" class="selectbox">
-                <option value="1">1</option>
-              </select>
+              <input type="number" id="bible-verse-start" class="input2"  v-model="startVerse"/>
             </div>
           </div>~
           <div class="verse">
             <div>
               <label for="bible-chapter-end" class="hidden">마지막 장</label>
-              <select name="bible-chapter-end" id="bible-chapter-end" class="selectbox">
-                <option value="1">1</option>
-              </select>
+               <input type="number" id="bible-chapter-end" class="input2" v-model="endChapter"/>
             </div>
             <div>
               <label for="bible-verse-end" class="hidden">마지막 절</label>
-              <select name="bible-verse-end" id="bible-verse-end" class="selectbox">
-                <option value="1">11</option>
-              </select>
+              <input type="number" id="bible-verse-end" class="input2" v-model="endVerse"/>
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn--g">검색하기</button>
+        <button type="button" class="btn btn--g"  @click="applyVerse" :disabled="loading">검색하기</button>
       </form>
       <!-- search bible -->
       <div class="bible__show">
@@ -72,7 +62,14 @@
   </div>
 </template>
 <script setup>
-  import { ref } from 'vue';
+  import { ref, version } from 'vue';
+  import { useBible } from './../../composables/useBible'
+  import {useEditorStore} from './../../stores/editor';
+
+  const { fetchVerse, bibleList } = useBible();
+  const editorStore = useEditorStore();
+  
+  // 열고 닫기
   const emit = defineEmits([
     'close-modal', 
   ]
@@ -85,6 +82,48 @@
     emit('close-modal');
     emit('bible-txt', bibleTxt)
   }
+
+  // 성경 검색 form
+  const passage = ref('') // 전체 구절
+  
+  const selectedBibleVersion = ref('web'); // 선택된 버전
+  const selectedVersion = ref(bibleList.value[0].version); // 선택된 버전
+  const bibleNameList = ref(
+    bibleList.value[0].list
+  ); // 성경목록
+  const selectedBibleName = ref(bibleNameList.value[0].value); // 선택된항목
+  const startChapter = ref(1); // 시작 장
+  const endChapter = ref(1); // 시작 절
+  const startVerse = ref(1); // 마지막 장
+  const endVerse = ref(1); // 마지막 절
+  
+    watch(selectedVersion, () => {
+    let searchBibleList = bibleList.value.find(f => f.version === selectedVersion.value);
+    if(searchBibleList) {
+      let list = searchBibleList.list;
+      bibleNameList.value = list;
+      selectedBibleName.value = bibleNameList.value[0].value
+    }
+  })
+  
+  // 성경 검색하기
+  const loading = ref(false) 
+  const error = ref('')
+
+  const applyVerse = async () => {
+  loading.value = true
+  error.value = ''
+  passage.value = `${selectedBibleName.value} ${startChapter.value}:${startVerse.value}-${endChapter.value}:${endVerse.value}`
+  console.log(passage.value)
+  try {
+    const data = await fetchVerse(passage.value, selectedBibleVersion.value)
+    bibleTxt.value = data.text;
+  } catch (e) {
+    error.value = '불러오기 실패'
+  } finally {
+    loading.value = false
+  } 
+}
 </script>
 <style lang="scss" scoped>
   .bible{
@@ -99,8 +138,11 @@
       margin: 28px 0 20px;
       height: 360px;
     }
-    .verse .selectbox {
-      min-width: 40px;
+    .input2 {
+    padding: 8px 10px;
+    border-radius: 0;
+    min-width: 40px;
+     width: 120px;
     }
   }
   .btn-wrapper {
