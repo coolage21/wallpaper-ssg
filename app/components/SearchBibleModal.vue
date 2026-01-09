@@ -111,6 +111,7 @@
   const error = ref('')
 
   const applyVerse = async () => {
+  if (loading.value) return
   loading.value = true
   error.value = ''
   passage.value = `${selectedBibleName.value} ${startChapter.value}:${startVerse.value}-${endChapter.value}:${endVerse.value}`
@@ -119,7 +120,8 @@
     const data = await fetchVerse(passage.value, selectedBibleVersion.value)
     bibleTxt.value = data.text;
   } catch (e) {
-    error.value = '불러오기 실패'
+    console.error(e)
+    error.value = e?.message || '불러오기 실패'
   } finally {
     loading.value = false
   } 

@@ -14,7 +14,7 @@
          <input type="file" accept="image/*" @change="onFileChange" id="my-local"/>
        </div>
       <button @click="goToNext('imgSite')" type="button" class="btn btn-search-img2">무료 이미지 사이트에서<br/>검색하기</button>
-      <button @click="goToNext('ai')" type="button" class="btn btn-search-img2">ai로 만들기(chatGpt)</button>
+      <button @click="goToNext('ai')" type="button" class="btn-search-img2"  disabled>ai로 만들기(개발예정)</button>
       <button @click="goToFirst()" type="button" class="btn btn--g goBack">뒤로가기</button>
     </div>
     <!-- search img methods -->
@@ -26,7 +26,7 @@
         <label v-else-if="isMethod=='imgSite'" for="search-img-txt">무료 이미지 사이트에서<br/>검색하기</label>
         <label v-else-if="isMethod=='ai'" for="search-img-txt">ai로 만들기<br/>(chatGpt)</label>
         <div class="search-img__input">
-          <input id="search-img-txt" type="text" placeholder="이미지에 추가할 텍스트를 입력해주세요">
+          <input id="search-img-txt" type="text" placeholder="이미지에 추가할 텍스트를 입력해주세요" v-model="searchTxt">
           <button @click="searchImg" type="button" class="search-btn">
             <img src="" alt="">검색하기
             <span class="hidden">검색하기</span>
@@ -39,7 +39,7 @@
         <template v-if="resultLists.length > 0">
           <div class="search-img__lists">
             <div v-for="(item, idx) in resultLists" class="search-img__list">
-              <img :src="item.imgPath" alt="">
+              <img :src="item.preview" alt="">
               <span class="list-hover">
                 <button @click="showDetail(idx)" type="button" class="btn btn--g">크게보기</button>
               </span>
@@ -66,7 +66,8 @@
 <script setup>
   import { ref } from 'vue';
   import { useEditorStore } from './../../stores/editor';
-  const editorStore = useEditorStore()
+  const editorStore = useEditorStore();
+  const config = useRuntimeConfig();
   const {
     imgUrl,
   } = storeToRefs(editorStore);
@@ -78,15 +79,10 @@
   const isShowResultLists = ref(false);
   const isShowResultImg = ref(false);
   const isMethod = ref('');
-  const resultLists = ref([
-    {imgPath:'/images/image_no.png'},
-    {imgPath:'/images/image_no.png'},
-    {imgPath:'/images/image_no.png'},
-    {imgPath:'/images/image_no.png'},
-    {imgPath:'/images/image_no.png'},
-    {imgPath:'/images/image_no.png'},
-  ]);
+  const resultLists = ref([]);
   const resultImg = ref('');
+  const searchTxt = ref('');
+
   const goToNext = (method) => {
     isMethod.value = method;
     currentImgSection.value = 2;
@@ -106,29 +102,53 @@
     resultLists.value = [];
     isShowResultLists.value = false;
   }
+  // 검색하기 버튼
   const searchImg = () => {
-    if (isMethod == 'local'){
-      searchForLocal();
-    } else if (isMethod == 'imgSite') {
+    if (isMethod.value == 'imgSite') {
       searchForImgSite();
-    } else if (isMethod == 'ai') {
+    } else if (isMethod.value == 'ai') {
       searchForAi();
     }
-    // api 연동 해서
-    isShowResultLists.value = true;
+    isShowResultLists.value = true; // 결과 보이게
   }
-  const searchForLocal = () => {}
-  const searchForImgSite = () => {}
-  const searchForAi = () => {}
 
+  const loading = ref(false) 
+  const error = ref('')
+  
+  // 이미지 api로 검색하기
+  const searchForImgSite = async () => {
+    if (loading.value) return
+    loading.value = true
+    error.value = ''
+    
+    var URL = "https://pixabay.com/api/?key="+config.public.apiKey+"&q="+encodeURIComponent(searchTxt.value);
+    try {
+      const res = await fetch(URL)
+      if (!res.ok) {
+        throw new Error('API 요청 실패')
+      }
+      const data = await res.json()
+      resultLists.value = data.hits.map(e => {return { id: e.id, preview : e.previewURL, imgSrc: e.largeImageURL}})
+    } catch (e) {
+      console.error(e)
+      error.value = '이미지 검색 실패'
+    } finally {
+      loading.value = false
+    }
+  }
+  
+  const searchForAi = () => {}
+  // 크게보기
   const showDetail = (idx) => {
-    resultImg.value = resultLists.value[idx].imgPath;
+    resultImg.value = resultLists.value[idx].imgSrc;
     isShowResultImg.value = true;
   }
+  // 크게보기 닫기
   const hiddenDetail = () => {
     resultImg.value = '';
     isShowResultImg.value = false;
   }
+  // 이미지 선택
   const selectImg = () => {
     isShowImg.value = true;
     // reset
@@ -141,7 +161,7 @@
     emit('choice-img')
   }
 
-  // 내컴퓨터에서 가져오기(작업중)
+  // 내컴퓨터에서 가져오기
   const onFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -203,9 +223,12 @@
       margin: 10px;
       width: calc((100% - 60px) / 3);
       position: relative;
+      aspect-ratio: 16 / 9;
       img {
         display: block;
-        width: 100%;;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
       .list-hover {
         width: 100%;
@@ -228,15 +251,18 @@
     }
     &__view {
       background-color: #363636da;
+      overflow: hidden;
       img {
-        margin-top: 15px;
-        @include position-center;
-        max-width:80%;
-        width:80%;
+        width:100%;
+        height: 100%;
+        object-fit: contain;
       }
     }
     &__btn-wrapper {
-      margin: 20px;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      // margin: 20px;
       .btn--g {
         margin-right: 10px;
       }
