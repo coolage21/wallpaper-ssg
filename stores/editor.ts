@@ -31,6 +31,7 @@ export const useEditorStore = defineStore('editor', () => {
     const imgRepeat = ref(false);
     const imgDesignBlur = ref(false);
     const imgDesignCenter = ref('none'); // white, black, none
+    const landscape = ref(true);
     // 폰트
     const font = ref([]);
     const selectedFont = ref('');
@@ -259,6 +260,7 @@ export const useEditorStore = defineStore('editor', () => {
     imgRepeat,
     imgDesignBlur,
     imgDesignCenter,
+    landscape,
     // 폰트
     font,
     selectedFont,

@@ -13,7 +13,7 @@
          <label for="my-local" class="btn btn-search-img2">내 컴퓨터에서 가져오기</label>
          <input type="file" accept="image/*" @change="onFileChange" id="my-local"/>
        </div>
-      <button @click="goToNext('imgSite')" type="button" class="btn btn-search-img2">무료 이미지 사이트에서<br/>검색하기</button>
+      <button @click="goToNext('imgSite')" type="button" class="btn btn-search-img2">무료 이미지 사이트에서<br/>검색하기 (pixabay)</button>
       <button @click="goToNext('ai')" type="button" class="btn-search-img2"  disabled>ai로 만들기(개발예정)</button>
       <button @click="goToFirst()" type="button" class="btn btn--g goBack">뒤로가기</button>
     </div>
@@ -23,7 +23,7 @@
       <div class="search-img__form">
         <h4 class="hidden">이미지 검색창</h4>
         <label v-if="isMethod=='local'" for="search-img-txt">내 컴퓨터에서<br/>가져오기</label>
-        <label v-else-if="isMethod=='imgSite'" for="search-img-txt">무료 이미지 사이트에서<br/>검색하기</label>
+        <label v-else-if="isMethod=='imgSite'" for="search-img-txt">무료 이미지 사이트에서<br/>검색하기 (pixabay)</label>
         <label v-else-if="isMethod=='ai'" for="search-img-txt">ai로 만들기<br/>(chatGpt)</label>
         <div class="search-img__input">
           <input id="search-img-txt" type="text" placeholder="이미지에 추가할 텍스트를 입력해주세요" v-model="searchTxt">
@@ -45,7 +45,7 @@
               </span>
             </div>
           </div>
-          <Pagination/>
+          <UPagination v-model:page="page" :items-per-page="perPage" :total="safeTotalCont"  />
         </template>
         <div v-else class="noData">해당 내용과 관련된 이미지가 없습니다.</div>
       </div>
@@ -64,12 +64,14 @@
   <!-- result list view larger -->
 </template>
 <script setup>
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
   import { useEditorStore } from './../../stores/editor';
   const editorStore = useEditorStore();
   const config = useRuntimeConfig();
   const {
-    imgUrl,
+    landscape, //가로형
+    selectedRatio,
+    ratioData,
   } = storeToRefs(editorStore);
 
   const emit = defineEmits(['choice-img'])
@@ -112,23 +114,32 @@
     isShowResultLists.value = true; // 결과 보이게
   }
 
+
+  // 이미지 api로 검색하기
+  const page = ref(1);
+  const perPage = ref(20);
+  const safeTotalCont = ref();
   const loading = ref(false) 
   const error = ref('')
   
-  // 이미지 api로 검색하기
   const searchForImgSite = async () => {
     if (loading.value) return
     loading.value = true
     error.value = ''
     
-    var URL = "https://pixabay.com/api/?key="+config.public.apiKey+"&q="+encodeURIComponent(searchTxt.value);
+    var URL = `https://pixabay.com/api/?key=${config.public.apiKey}&q=${encodeURIComponent(searchTxt.value)}&page=${page.value}`;
     try {
       const res = await fetch(URL)
       if (!res.ok) {
         throw new Error('API 요청 실패')
       }
       const data = await res.json()
-      resultLists.value = data.hits.map(e => {return { id: e.id, preview : e.previewURL, imgSrc: e.largeImageURL}})
+      let maxTotal = 500;
+ 
+      safeTotalCont.value = Math.min(data.totalHits, maxTotal);
+
+
+      resultLists.value = data.hits.map(e => {return { id: e.id, preview : e.previewURL, imgSrc: e.largeImageURL, width:e.imageWidth, height: e.imageHeight }})
     } catch (e) {
       console.error(e)
       error.value = '이미지 검색 실패'
@@ -136,11 +147,44 @@
       loading.value = false
     }
   }
+
+  watch(page, ()=> {
+    searchForImgSite();
+    
+  })
   
+  const ratioRow = ref('');
+  const ratioCol = ref('');
+
+  if (selectedRatio.value == ratioData.value[0]){
+    ratioRow.value='16'
+    ratioCol.value='9'
+  } else if (selectedRatio.value == ratioData.value[1]) {
+    ratioRow.value='5'
+    ratioCol.value='4'
+  } else if (selectedRatio.value == ratioData.value[2]) {
+    ratioRow.value='4'
+    ratioCol.value='3'
+  } else if (selectedRatio.value == ratioData.value[3]) {
+    ratioRow.value='16'
+    ratioCol.value='10'
+  } else if (selectedRatio.value == ratioData.value[4]) {
+    ratioRow.value='16'
+    ratioCol.value='9'
+  }
+
+
   const searchForAi = () => {}
   // 크게보기
   const showDetail = (idx) => {
     resultImg.value = resultLists.value[idx].imgSrc;
+    // 비율보다 가로로 더 길다면
+    if( resultLists.value[idx].width * ratioCol.value / ratioRow.value > resultLists.value[idx].height){
+      landscape.value = true
+    } else {
+      // 비율보다 세로로 더 길다면
+      landscape.value = false
+    }
     isShowResultImg.value = true;
   }
   // 크게보기 닫기
@@ -219,6 +263,7 @@
       box-sizing: border-box;
     }
     &__list {
+      background-color: $white;
       box-sizing: border-box;
       margin: 10px;
       width: calc((100% - 60px) / 3);
@@ -299,7 +344,21 @@
       gap: 20px;
     }
   }
-
+  // 페이지네이션 (공통처리 할지 말지 고민 필요)
+  :deep(nav > div) {
+    @include flex-center;
+    gap: 3px;
+  }
+  :deep(nav button) {
+    width: 40px;
+    height: 40px;
+    background-color: $white;
+    justify-content: center;
+    border-radius: 5px;
+  }
+  :deep(.bg-primary) {
+    background-color: $light-gray;
+  }
   // btn
   .btn-change {
     margin-bottom: 10px;

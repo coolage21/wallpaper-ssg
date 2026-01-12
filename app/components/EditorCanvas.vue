@@ -28,6 +28,7 @@
     imgRepeat,
     imgDesignBlur,
     imgDesignCenter, // white, black, none
+    landscape,
     //폰트
     font,
     selectedFont,
@@ -72,7 +73,6 @@
     borderRadius : `${boxRounding.value}px`,
   }))
 
-  const imgimg = ref('https://picsum.photos/700/700'); 
   // 에디터 수정내용은 pinia
   const bgStyle = computed(()=> ({
     backgroundColor: isShowBgColor.value ? bgColor.value : 'transparent',
@@ -84,11 +84,21 @@
   }))
   
 const objectFit = computed(() => {
-  switch (imgSize.value) {
-    case 'row': return 'contain'
-    case 'col': return 'cover'
-    case 'all': return '100% 100%'
-    default: return 'cover'
+  if(landscape.value) {
+    switch (imgSize.value) {
+      case 'row': return 'contain'
+      case 'col': return 'cover'
+      case 'all': return '100% 100%'
+      default: return 'cover'
+    }
+  } else {
+    switch (imgSize.value) {
+      case 'row': return 'cover'
+      case 'col': return 'contain'
+      case 'all': return '100% 100%'
+      default: return 'cover'
+    }
+
   }
 })
 

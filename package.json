@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxt/ui": "^4.3.0",
     "@pinia/nuxt": "^0.11.3",
     "html2canvas": "^1.4.1",
     "nuxt": "^4.2.2",
