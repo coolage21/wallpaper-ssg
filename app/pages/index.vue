@@ -21,7 +21,7 @@
     <div class="ly-main__right">
       <EditorSettings/>
       <div class="btn-wrapper">
-        <button type="button" class="btn btn-download">기본 다운로드</button>
+        <button type="button" class="btn btn-download" @click="saveAsImage">기본 다운로드</button>
         <button type="button" class="btn btn-download--row">저화질 다운로드(ppt배경용)</button>
       </div>
       <!--button wrapper-->
@@ -62,7 +62,6 @@ const changeRatio = () => {
   } else if (selectedRatio.value == ratioData.value[4]) {
     ratio.value='16/9'
     mobileSize.value = true;
-   
   }
 }
 if(selectedRatio.value && ratioData.value){
@@ -101,7 +100,27 @@ const commitQuoteData = () => {
 }
 watch(quoteData, v => (inputQuoteData.value =  v.join('\n')  ))
 // 해상도 사이즈에 따라 캔버스 사이즈 변경 처리 필요
-ratio
+
+// 다운로드
+import html2canvas from 'html2canvas'
+
+const saveAsImage = async () => {
+  const target = document.querySelector('.canvas')
+  if (!target) return
+
+  const canvas = await html2canvas(target, {
+    backgroundColor: 'transparent', // 투명 방지
+    scale: 2, // 해상도 ↑
+    useCORS: true,
+  })
+
+  const url = canvas.toDataURL('image/png')
+
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'result.png'
+  link.click()
+}
 
 </script>
 <style lang="scss" scoped>
@@ -142,6 +161,7 @@ ratio
       max-width: 65vw;
       width: 900px;
       margin-bottom: 23px;
+      border: 1px solid $dark-gray;
     }
   }
   //button
@@ -186,5 +206,5 @@ ratio
     .btn-wrapper {
         bottom: 90%;
     }
-  } 
+  }   
 </style>

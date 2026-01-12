@@ -131,7 +131,6 @@ const centerColor = computed(() => {
       width: 100%;
       height: 100%;
       overflow: hidden; 
-      border: 1px solid rgb(91, 91, 91);
     }
     img {
       width: 100%;
