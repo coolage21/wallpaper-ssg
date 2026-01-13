@@ -47,10 +47,11 @@ export const useEditorStore = defineStore('editor', () => {
     const addBox = ref(false);
     const boxColor = ref('#ffffff');
     const boxColorOpacity = ref('100'); // 0 ~ 100
-    const boxWidth = ref('100');
-    const boxHeight = ref('100');
+    const boxWidth = ref('800');
+    const boxHeight = ref('400');
     const boxRounding = ref('0');
-
+    // 
+    const isShowEditorCanvas = ref(false);
     // 해상도 데이터
     ratioData.value = [
       '일반pc (1920px x 1080px)',
@@ -120,6 +121,8 @@ export const useEditorStore = defineStore('editor', () => {
     // 데이터
     imgUrl,
     quoteData,
+    //
+    isShowEditorCanvas
   }
 
   const apply = (payload: Record<string, any>) => {
@@ -144,6 +147,11 @@ export const useEditorStore = defineStore('editor', () => {
   const undo = () => {
     const action = past.value.pop()
     if (!action) return
+    if(action.before.imgUrl != 'undefined'){
+      if(action.before.imgUrl == ''){
+        isShowEditorCanvas.value = false;
+      } 
+    };
 
     isRestoring.value = true
     try {
@@ -218,6 +226,7 @@ export const useEditorStore = defineStore('editor', () => {
 
     imgUrl: imgUrl.value,
     quoteData: quoteData.value,
+    isShowEditorCanvas: true,
   })
 
   const restoreSnapshot = (snapshot: EditorSnapshot) => {
@@ -237,13 +246,15 @@ export const useEditorStore = defineStore('editor', () => {
   const saveDraft = () => {
     localStorage.setItem(
       'editor:draft',
-      JSON.stringify(getSnapshot())
+      JSON.stringify({
+        ...getSnapshot(),
+        images: [] // ❌ 이미지 제거
+      })
     )
   }
 
   const loadDraft = () => {
-    const raw = localStorage.getItem('editor:draft')
-    if (!raw) return
+    const raw = localStorage.getItem('editor:draft');
     restoreSnapshot(JSON.parse(raw))
   }
 
@@ -296,6 +307,8 @@ export const useEditorStore = defineStore('editor', () => {
     // draft
     saveDraft,
     loadDraft,
+    //
+    isShowEditorCanvas,
   }
   
 })

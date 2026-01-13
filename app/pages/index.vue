@@ -3,10 +3,10 @@
     <div class="ly-main__left">
       <div class="main__img-wrapper" :style="{'aspect-ratio': ratio}" :class="{mobile : mobileSize}">
         <SearchImage v-show="!isShowEditorCanvas"
-         :aria-hidden="isShowEditorCanvas" @choice-img="resultImg"/>
+         :aria-hidden="isShowEditorCanvas" />
         <EditorCanvas v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas" />
       </div>
-      <button v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas"  @click="changeImg" type="button" class="btn btn--g btn-change">이미지 변경하기</button>
+      <button v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas"  @click="isShowEditorCanvas = false" type="button" class="btn btn--g btn-change">이미지 변경하기</button>
       <section class="main__txt">
         <h2 class="hidden">
           글 작성하기
@@ -34,6 +34,9 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useEditorStore } from './../../stores/editor';
+import {sweetAlert}  from'./../../composables/sweetAlerts'
+
+const { showAlert } = sweetAlert();
 
 // pinia store (이미지 여기서 고려해야할까 고민해보기...)
 const editorStore = useEditorStore()
@@ -41,6 +44,8 @@ const {
   selectedRatio,
   ratioData,
   quoteData,
+  imgUrl,
+  isShowEditorCanvas,
 } = storeToRefs(editorStore);
 
 // 해상도에 맞은 비율 사이즈
@@ -79,16 +84,8 @@ const normalizeToString = (v) => {
 }
 
 const isModalOpen = ref(false);
-const isShowEditorCanvas = ref(false);
 const inputQuoteData = ref(quoteData.value);
 
-// 이미지 검색, 결과 분기
-const resultImg = () => {
-  isShowEditorCanvas.value = true;
-}
-const changeImg = () => {
-  isShowEditorCanvas.value = false;
-}
 
 // 텍스트
 const BibleTxt = (value) => {
@@ -105,6 +102,10 @@ watch(quoteData, v => (inputQuoteData.value =  v.join('\n')  ))
 import html2canvas from 'html2canvas'
 
 const saveAsImage = async () => {
+  if(!imgUrl.value){
+    showAlert('다운로드 오류', '저장 할 이미지가 없습니다', 'error')
+    return
+  }
   const target = document.querySelector('.canvas')
   if (!target) return
 

@@ -253,6 +253,9 @@
   import { ref, watch } from 'vue';
   import {storeToRefs} from 'pinia';
   import {useEditorStore} from './../../stores/editor';
+  import {sweetAlert} from './../../composables/sweetAlerts';
+
+  const { showAlert } = sweetAlert()
 
   // toggle
   const toggleImg = ref(true);
@@ -260,17 +263,7 @@
   const toggleBox = ref(true);
  
   const editorStore = useEditorStore()
-  // 실행취소, 되돌리기
-  const onSaveDraft = () => {
-  editorStore.saveDraft()
-  alert('임시저장되었습니다.')
-}
-
-const onLoadDraft = () => {
-  editorStore.loadDraft()
-  alert('임시저장을 불러왔습니다.')
-}
-  // pinia store
+    // pinia store
   const {
     saveData, // 임시저장
     selectedRatio, // 해상도
@@ -302,7 +295,43 @@ const onLoadDraft = () => {
     boxWidth,
     boxHeight,
     boxRounding,
+    // 데이터
+    imgUrl,
+    //
+    isShowEditorCanvas
   } = storeToRefs(editorStore);
+  // 실행취소, 되돌리기
+  const onSaveDraft = () => {
+    if(!imgUrl.value){
+      showAlert('임시저장 오류', '저장 할 이미지가 없습니다', 'error')
+      return
+    }
+    showAlert('주의', '임시저장을 할 경우 기존에 저장한 데이터는 삭제됩니다.', 'warning', true).then((result) => {
+      if (result.isConfirmed) {
+        editorStore.saveDraft()
+        showAlert('저장 완료', '임시저장이 완료되었습니다.', 'success')
+      } else if (result.isDenied) {
+      }
+    });
+  }
+
+  const onLoadDraft = () => {
+    const raw = localStorage.getItem('editor:draft');
+    console.log(raw);
+     if (!raw) {
+        showAlert('임시저장 불러오기 오류', '불러올 이미지가 없습니다', 'error')
+      return
+    }
+    showAlert('주의', '임시저장을 불러올 경우 기존에 작업한 데이터들은 모두 삭제됩니다.', 'warning', true).then((result) => {
+      if (result.isConfirmed) {
+        editorStore.loadDraft()
+        isShowEditorCanvas.value = true;
+        showAlert('불러오기 완료', '임시저장된 데이터를 불러왔습니다.', 'success')
+      } else if (result.isDenied) {
+      }
+    });
+  }
+
 
   const fontWeightList = ref([]);
   fontWeightList.value = font.value[0].weight;

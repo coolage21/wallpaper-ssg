@@ -23,6 +23,9 @@ importers:
       pinia:
         specifier: ^3.0.4
         version: 3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3))
+      sweetalert2:
+        specifier: ^11.26.17
+        version: 11.26.17
       vue:
         specifier: ^3.5.26
         version: 3.5.26(typescript@5.9.3)
@@ -3732,6 +3735,9 @@ packages:
     resolution: {integrity: sha512-VvrHQ+9uniE+Mvx3+C9IEe/lWasXCU0nXMY2kZeLrHNICuRiC8uMPyM14UEaMOFA5mhyQqEkB02VoQ16n3DLaw==}
     engines: {node: '>=16'}
     hasBin: true
+
+  sweetalert2@11.26.17:
+    resolution: {integrity: sha512-kkaySn1IRfwNlf9AkZVqDmBINDWw9NRR6Ij0O5dBRBOD1+mbtZJWxxR9/pA90nce9E5tIIkJ7SWij4rMWXtA1g==}
 
   system-architecture@0.1.0:
     resolution: {integrity: sha512-ulAk51I9UVUyJgxlv9M6lFot2WP3e7t8Kz9+IS6D4rVba1tR9kON+Ey69f+1R4Q8cd45Lod6a4IcJIxnzGc/zA==}
@@ -8366,6 +8372,8 @@ snapshots:
       csso: 5.0.5
       picocolors: 1.1.1
       sax: 1.4.3
+
+  sweetalert2@11.26.17: {}
 
   system-architecture@0.1.0: {}
 

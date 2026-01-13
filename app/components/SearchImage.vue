@@ -73,9 +73,9 @@
     landscape, //가로형
     selectedRatio,
     ratioData,
+    isShowEditorCanvas
   } = storeToRefs(editorStore);
 
-  const emit = defineEmits(['choice-img'])
 
   const currentImgSection = ref(0);
   const isShowImg = ref(false);
@@ -95,7 +95,7 @@
       currentImgSection.value = 0;
     } else {
       isShowImg.value = true;
-      emit('choice-img')
+      isShowEditorCanvas.value = true;
     }
   }
   const goToBack = () => {
@@ -202,7 +202,7 @@
     isShowResultLists.value = false;
     isShowResultImg.value = false;
     editorStore.commitField('imgUrl', resultImg.value)
-    emit('choice-img')
+    isShowEditorCanvas.value = true
   }
 
   // 내컴퓨터에서 가져오기
