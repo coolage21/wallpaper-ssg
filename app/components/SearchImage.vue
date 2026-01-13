@@ -69,6 +69,7 @@
   const editorStore = useEditorStore();
   const config = useRuntimeConfig();
   const {
+    imgUrl,
     landscape, //가로형
     selectedRatio,
     ratioData,
@@ -90,7 +91,7 @@
     currentImgSection.value = 2;
   }
   const goToFirst = () => {
-    if(resultImg.value == '') {
+    if(imgUrl.value == '') {
       currentImgSection.value = 0;
     } else {
       isShowImg.value = true;
@@ -189,7 +190,6 @@
   }
   // 크게보기 닫기
   const hiddenDetail = () => {
-    resultImg.value = '';
     isShowResultImg.value = false;
   }
   // 이미지 선택
