@@ -7,10 +7,14 @@
     <div class="canvas__center" :style="centerStyle"></div>
     <div class="canvas__box" :style="boxStyle"></div>
     <div class="canvas__txt" :style="fontStyle">
-      <template v-for="(line, index) in quoteData" :key="index" >
+      <!-- <template v-for="(line, index) in quoteData" :key="index" >
+      <span>{{ line }}</span>
+    </template> -->
+    <template v-for="line in newTxt" :key="line">
       <span>{{ line }}</span>
       <br />
     </template>
+    <!-- <span style="color:red">{{ newTxt}}</span> -->
     </div>
   </section>
 </template>
@@ -18,7 +22,10 @@
   import { ref, defineProps } from 'vue';
   import { useEditorStore } from './../../stores/editor';
   const editorStore = useEditorStore();
+  
   const {
+    selectedRatio, // 해상도
+    ratioData,
     // 배경색
     bgColor,
     isShowBgColor,
@@ -52,6 +59,61 @@
     quoteData,
   } = storeToRefs(editorStore)
 
+  const props = defineProps({
+    text: {
+    type: String,
+    default: ''
+  }
+  })
+
+  // 비율 지정하기
+  const imgW = ref('');
+  const imgH = ref('')
+    const ratioRow = ref('');
+  const ratioCol = ref('');
+
+  if (selectedRatio.value == ratioData.value[0]){
+    ratioRow.value='16'
+    ratioCol.value='9'
+  } else if (selectedRatio.value == ratioData.value[1]) {
+    ratioRow.value='5'
+    ratioCol.value='4'
+  } else if (selectedRatio.value == ratioData.value[2]) {
+    ratioRow.value='4'
+    ratioCol.value='3'
+  } else if (selectedRatio.value == ratioData.value[3]) {
+    ratioRow.value='16'
+    ratioCol.value='10'
+  } else if (selectedRatio.value == ratioData.value[4]) {
+    ratioRow.value='16'
+    ratioCol.value='9'
+  }
+  watch(
+    () => editorStore.imgUrl,
+    (url) => {
+      if (!url) return 
+      const img = new Image()
+      img.src = url
+      img.onload = () => {
+        imgW.value = img.width
+        imgH.value = img.height
+        if( imgW.value * ratioCol.value / ratioRow.value > imgH.value){
+          landscape.value = true
+        } else {
+          // 비율보다 세로로 더 길다면
+          landscape.value = false
+        }
+      }
+    },
+    { immediate: true }
+  )
+  // 글자 바로 보여주기
+  const newTxt = computed(() => {
+    if (Array.isArray(props.text)) return props.text
+    return props.text.split('\n')
+  })
+  
+
   const fontStyle = computed(()=> ({
     fontFamily: selectedFont.value,
     fontSize: `${fontSize.value}px`,
@@ -63,7 +125,7 @@
     '--opacity': fontBgColorOpacity.value / 100,
     '--display' : isShowFontBgColor.value ? 'block' : 'none',
   }))
-  
+
   const boxStyle = computed(() => ({
     display: addBox.value ? 'block' : 'none',
     background : boxColor.value,
@@ -150,8 +212,12 @@ const centerColor = computed(() => {
       @include position-center;
       text-align: center;
     }
-    &__txt span{
+    &__txt {
+      width: 100%;
+      span {
       position: relative;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
       &::before {
         content: "";
         display:var(--display);
@@ -164,6 +230,7 @@ const centerColor = computed(() => {
         opacity: var(--opacity);   /* ✅ 배경만 투명 */
         z-index: -1;
       }
+    }
     }
     &__center {
       width: 90%;

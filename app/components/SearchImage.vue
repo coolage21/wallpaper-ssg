@@ -1,12 +1,12 @@
 <template>
   <section class="main__img search-img__wrapper">
     <h2 class="hidden">이미지 검색 화면</h2>
-    <div v-if="currentImgSection == 0" class="search-img">
+    <div v-if="currentSearchImgSection == 0" class="search-img">
       <h3 class="hidden">이미지 가져오기 화면</h3>
-      <button @click="currentImgSection = 1" type="button" class="btn btn--g btn-search-img">+ 이미지 가져오기</button>
+      <button @click="currentSearchImgSection = 1" type="button" class="btn btn--g btn-search-img">+ 이미지 가져오기</button>
     </div>
     <!-- search img -->
-    <div v-else-if="currentImgSection == 1" class="search-img btn-search-img2__wrapper search-img--dark">
+    <div v-else-if="currentSearchImgSection == 1" class="search-img btn-search-img2__wrapper search-img--dark">
       <h3 class="hidden">이미지 가져오는 방법 선택하기</h3>
       <!-- <button @click="goToNext('local')" type="button" class="btn btn-search-img2">내 컴퓨터에서 가져오기</button> -->
        <div class="my-local">
@@ -18,7 +18,7 @@
       <button @click="goToFirst()" type="button" class="btn btn--g goBack">뒤로가기</button>
     </div>
     <!-- search img methods -->
-    <div v-else-if="currentImgSection == 2" class="search-img search-img--dark">
+    <div v-else-if="currentSearchImgSection == 2" class="search-img search-img--dark">
       <h3 class="hidden">이미지 검색하기</h3>
       <div class="search-img__form">
         <h4 class="hidden">이미지 검색창</h4>
@@ -73,11 +73,11 @@
     landscape, //가로형
     selectedRatio,
     ratioData,
-    isShowEditorCanvas
+    isShowEditorCanvas,
+    currentSearchImgSection,
   } = storeToRefs(editorStore);
 
 
-  const currentImgSection = ref(0);
   const isShowImg = ref(false);
   const isShowResultLists = ref(false);
   const isShowResultImg = ref(false);
@@ -88,18 +88,18 @@
 
   const goToNext = (method) => {
     isMethod.value = method;
-    currentImgSection.value = 2;
+    currentSearchImgSection.value = 2;
   }
   const goToFirst = () => {
     if(imgUrl.value == '') {
-      currentImgSection.value = 0;
+      currentSearchImgSection.value = 0;
     } else {
       isShowImg.value = true;
       isShowEditorCanvas.value = true;
     }
   }
   const goToBack = () => {
-    currentImgSection.value = 1; 
+    currentSearchImgSection.value = 1; 
     // reset
     isMethod.value = '';
     resultLists.value = [];
@@ -154,38 +154,12 @@
     
   })
   
-  const ratioRow = ref('');
-  const ratioCol = ref('');
-
-  if (selectedRatio.value == ratioData.value[0]){
-    ratioRow.value='16'
-    ratioCol.value='9'
-  } else if (selectedRatio.value == ratioData.value[1]) {
-    ratioRow.value='5'
-    ratioCol.value='4'
-  } else if (selectedRatio.value == ratioData.value[2]) {
-    ratioRow.value='4'
-    ratioCol.value='3'
-  } else if (selectedRatio.value == ratioData.value[3]) {
-    ratioRow.value='16'
-    ratioCol.value='10'
-  } else if (selectedRatio.value == ratioData.value[4]) {
-    ratioRow.value='16'
-    ratioCol.value='9'
-  }
 
 
   const searchForAi = () => {}
   // 크게보기
   const showDetail = (idx) => {
     resultImg.value = resultLists.value[idx].imgSrc;
-    // 비율보다 가로로 더 길다면
-    if( resultLists.value[idx].width * ratioCol.value / ratioRow.value > resultLists.value[idx].height){
-      landscape.value = true
-    } else {
-      // 비율보다 세로로 더 길다면
-      landscape.value = false
-    }
     isShowResultImg.value = true;
   }
   // 크게보기 닫기
@@ -196,7 +170,7 @@
   const selectImg = () => {
     isShowImg.value = true;
     // reset
-    currentImgSection.value = 1;
+    currentSearchImgSection.value = 1;
     isMethod.value = '';
     resultLists.value = [];
     isShowResultLists.value = false;

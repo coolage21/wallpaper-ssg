@@ -4,15 +4,18 @@
       <div class="main__img-wrapper" :style="{'aspect-ratio': ratio}" :class="{mobile : mobileSize}">
         <SearchImage v-show="!isShowEditorCanvas"
          :aria-hidden="isShowEditorCanvas" />
-        <EditorCanvas v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas" />
+        <EditorCanvas v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas" :text="inputQuoteData" />
       </div>
-      <button v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas"  @click="isShowEditorCanvas = false" type="button" class="btn btn--g btn-change">이미지 변경하기</button>
+      <button v-show="isShowEditorCanvas"  :aria-hidden="!isShowEditorCanvas"  @click="changeImg" type="button" class="btn btn--g btn-change">이미지 변경하기</button>
       <section class="main__txt">
         <h2 class="hidden">
           글 작성하기
         </h2>
         <label for="main-txt" class="hidden">문구</label>
-        <textarea name="main-txt" id="main-txt" class="textarea" placeholder="이미지에 추가할 텍스트를 입력해주세요" v-model="inputQuoteData" @blur="commitQuoteData" @keyup.enter="commitQuoteData" ></textarea>
+        <textarea name="main-txt" id="main-txt" class="textarea" placeholder="이미지에 추가할 텍스트를 입력해주세요" 
+          :value="inputQuoteData"
+  @input="inputQuoteData = $event.target.value"
+  @blur="commitQuoteData" @keyup.enter="commitQuoteData" ></textarea>
         <button @click="isModalOpen = true" type="button" class="btn btn--w btn-search-bible">성경구절 찾기</button>
       </section>
      
@@ -46,6 +49,7 @@ const {
   quoteData,
   imgUrl,
   isShowEditorCanvas,
+  currentSearchImgSection,
 } = storeToRefs(editorStore);
 
 // 해상도에 맞은 비율 사이즈
@@ -84,7 +88,7 @@ const normalizeToString = (v) => {
 }
 
 const isModalOpen = ref(false);
-const inputQuoteData = ref(quoteData.value);
+const inputQuoteData = ref('');
 
 
 // 텍스트
@@ -123,6 +127,10 @@ const saveAsImage = async () => {
   link.click()
 }
 
+const changeImg = () => {
+  isShowEditorCanvas.value = false
+  currentSearchImgSection.value = 1;
+}
 </script>
 <style lang="scss" scoped>
   .ly-main {

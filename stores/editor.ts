@@ -50,8 +50,7 @@ export const useEditorStore = defineStore('editor', () => {
     const boxWidth = ref('800');
     const boxHeight = ref('400');
     const boxRounding = ref('0');
-    // 
-    const isShowEditorCanvas = ref(false);
+
     // 해상도 데이터
     ratioData.value = [
       '일반pc (1920px x 1080px)',
@@ -85,7 +84,9 @@ export const useEditorStore = defineStore('editor', () => {
     const imgUrl = ref('');
     // 텍스트
     const quoteData = ref([]);
-
+    // 보여줄 영역 설정을 위한 변수
+    const isShowEditorCanvas = ref(false);
+    const currentSearchImgSection = ref(0);
 
   // ========================
   // undo (실행취소, 다시실행)
@@ -121,8 +122,9 @@ export const useEditorStore = defineStore('editor', () => {
     // 데이터
     imgUrl,
     quoteData,
-    //
-    isShowEditorCanvas
+    // 보여줄 영역 설정을 위한 변수
+    isShowEditorCanvas,
+    currentSearchImgSection
   }
 
   const apply = (payload: Record<string, any>) => {
@@ -149,6 +151,7 @@ export const useEditorStore = defineStore('editor', () => {
     if (!action) return
     if(action.before.imgUrl != 'undefined'){
       if(action.before.imgUrl == ''){
+        currentSearchImgSection.value = 0;
         isShowEditorCanvas.value = false;
       } 
     };
@@ -165,7 +168,13 @@ export const useEditorStore = defineStore('editor', () => {
   const redo = () => {
     const action = future.value.shift()
     if (!action) return
-
+    // 다시실행시 이미지가 없다가 있게되는 경우에 에디터캔버스 컴포넌트 보이도록 처리
+    if(action.before.imgUrl != 'undefined'){
+      if(action.before.imgUrl == ''){
+        // currentSearchImgSection.value = 1;
+        isShowEditorCanvas.value = true;
+      } 
+    }
     isRestoring.value = true
     try {
       apply(action.after)
@@ -226,7 +235,8 @@ export const useEditorStore = defineStore('editor', () => {
 
     imgUrl: imgUrl.value,
     quoteData: quoteData.value,
-    isShowEditorCanvas: true,
+    isShowEditorCanvas: isShowEditorCanvas.value,
+    currentSearchImgSection: currentSearchImgSection.value,
   })
 
   const restoreSnapshot = (snapshot: EditorSnapshot) => {
@@ -309,6 +319,7 @@ export const useEditorStore = defineStore('editor', () => {
     loadDraft,
     //
     isShowEditorCanvas,
+    currentSearchImgSection
   }
   
 })
@@ -344,4 +355,7 @@ export interface EditorSnapshot {
 
   imgUrl: string
   quoteData: any[]
+  
+  isShowEditorCanvas:boolean
+  currentSearchImgSection:string
 }
