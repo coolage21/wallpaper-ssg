@@ -2,6 +2,19 @@
 import { fileURLToPath } from 'node:url';
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      title: '배경화면 만들기', // 기본 타이틀
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: 'favicon/favicon.ico' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: 'favicon/favicon-16x16.png' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: 'favicon/favicon-32x32.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: 'favicon/apple-touch-icon.png' },
+        { rel: 'manifest', href: 'favicon/site.webmanifest' },
+      ],
+    },
+    
+  },
   target: 'static', // 정적 사이트 생성
   ssr: true,       // SSR 렌더링 방식 사용 (Hydration 위해 필요)
   compatibilityDate: '2025-07-15',
