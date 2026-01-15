@@ -26,9 +26,9 @@
         <label v-else-if="isMethod=='imgSite'" for="search-img-txt">무료 이미지 사이트에서<br/>검색하기 (pixabay)</label>
         <label v-else-if="isMethod=='ai'" for="search-img-txt">ai로 만들기<br/>(chatGpt)</label>
         <div class="search-img__input">
-          <input id="search-img-txt" type="text" placeholder="이미지에 추가할 텍스트를 입력해주세요" v-model="searchTxt">
+          <input id="search-img-txt" type="text" placeholder="이미지에 추가할 텍스트를 입력해주세요" v-model="searchTxt" @keyup.enter="searchImg">
           <button @click="searchImg" type="button" class="search-btn">
-            <img src="" alt="">검색하기
+            <img src="/images/btn_search.png" alt="">
             <span class="hidden">검색하기</span>
           </button>
         </div>

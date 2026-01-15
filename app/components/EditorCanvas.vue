@@ -2,14 +2,10 @@
   <section class="main__img canvas ">
     <h2 class="hidden">이미지 및 결과 미리보기</h2>
     <div class="canvas__bg" :style="bgStyle">
-      <!-- <img :src="props.imgSrc" alt="" :style="imageStyle"> -->
     </div>
     <div class="canvas__center" :style="centerStyle"></div>
     <div class="canvas__box" :style="boxStyle"></div>
     <div class="canvas__txt" :style="fontStyle">
-      <!-- <template v-for="(line, index) in quoteData" :key="index" >
-      <span>{{ line }}</span>
-    </template> -->
     <template v-for="line in newTxt" :key="line">
       <span>{{ line }}</span>
       <br />

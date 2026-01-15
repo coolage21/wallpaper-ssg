@@ -13,9 +13,8 @@
         </h2>
         <label for="main-txt" class="hidden">문구</label>
         <textarea name="main-txt" id="main-txt" class="textarea" placeholder="이미지에 추가할 텍스트를 입력해주세요" 
-          :value="inputQuoteData"
-  @input="inputQuoteData = $event.target.value"
-  @blur="commitQuoteData" @keyup.enter="commitQuoteData" ></textarea>
+        @input="inputQuoteData = $event.target.value"
+        @blur="commitQuoteData" @keyup.enter="commitQuoteData" >{{ inputQuoteData }}</textarea>
         <button @click="isModalOpen = true" type="button" class="btn btn--w btn-search-bible">성경구절 찾기</button>
       </section>
      
