@@ -31,7 +31,7 @@
       <!-- background color -->
       <div class="setting__box" role="group" aria-labelledby="setting-img">
         <button  id="setting-img" class="setting__heading setting__toggle"   aria-expanded="true" aria-controls="img-items" @click="toggleImg = !toggleImg">이미지
-          <img src="/images/icon_arrow.png" alt="열기">
+          <NuxtImg src="/images/icon_arrow.png" alt="열기" />
         </button>
         <Transition name="slide">
           <div id="img-items" class="setting__items" v-show="toggleImg">
@@ -109,7 +109,7 @@
       <div class="setting__box" role="group" aria-labelledby="setting-font">
         <button id="setting-font" class="setting__heading setting__toggle" aria-expanded="true" aria-controls="font-items" @click="toggleFont = !toggleFont">
           폰트
-          <img src="/images/icon_arrow.png" alt="열림">
+          <NuxtImg src="/images/icon_arrow.png" alt="열기" />
         </button>
         <Transition name="slide">
           <div id="font-items" class="setting__items" v-show="toggleFont">
@@ -192,7 +192,7 @@
       <div class="setting__box" role="group" aria-labelledby="setting-box">
         <button id="setting-box" class="setting__heading setting__toggle" aria-expanded="true" aria-controls="box-items" @click="toggleBox = !toggleBox">
           네모박스
-          <img src="/images/icon_arrow.png" alt="열림">
+          <NuxtImg src="/images/icon_arrow.png" alt="열기" />
         </button>
         <Transition name="slide">
           <div id="box-items" class="setting__items" v-show="toggleBox">
@@ -222,7 +222,7 @@
                 </div>
             </div>
             <div class="setting__item" role="group" aria-labelledby="box-size">
-              <p id="box-size" class="setting__sub-heading">크기</p>
+              <p id="box-size" class="setting__sub-heading">크기<br/>(해상도 기준)</p>
               <div class="setting__cont">
                 <div class="inline-flex">
                   <label for="box-row">가로(px) :</label>

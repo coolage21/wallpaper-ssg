@@ -158,6 +158,7 @@ const changeImg = () => {
   .main {
     &__txt {
       display: flex;
+      margin-top: 15px;
       #mainTxt {
         width: 100%;
       }
@@ -168,7 +169,7 @@ const changeImg = () => {
       aspect-ratio: 16/9;
       max-width: 65vw;
       width: 900px;
-      margin-bottom: 23px;
+      margin-bottom: 5px;
       border: 1px solid $dark-gray;
     }
   }
@@ -209,7 +210,6 @@ const changeImg = () => {
     }
     :deep(.main__img) {
       max-width: 100%;
-      margin-bottom: 15px;
     }
     .btn-wrapper {
         bottom: 90%;

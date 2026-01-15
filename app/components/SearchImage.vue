@@ -28,7 +28,7 @@
         <div class="search-img__input">
           <input id="search-img-txt" type="text" placeholder="이미지에 추가할 텍스트를 입력해주세요" v-model="searchTxt" @keyup.enter="searchImg">
           <button @click="searchImg" type="button" class="search-btn">
-            <img src="/images/btn_search.png" alt="">
+            <NuxtImg src="/images/btn_search.png" alt="열기" />
             <span class="hidden">검색하기</span>
           </button>
         </div>
@@ -39,7 +39,7 @@
         <template v-if="resultLists.length > 0">
           <div class="search-img__lists">
             <div v-for="(item, idx) in resultLists" class="search-img__list">
-              <img :src="item.preview" alt="">
+              <NuxtImg :src="item.preview" :alt="item.alt" />
               <span class="list-hover">
                 <button @click="showDetail(idx)" type="button" class="btn btn--g">크게보기</button>
               </span>
@@ -53,7 +53,7 @@
       <!-- result list -->
       <div v-show="isShowResultImg" class="search-img search-img__view">
         <h4 class="hidden">선택 이미지 크게보기</h4>
-        <img :src="resultImg" alt="" class="view-img">
+        <NuxtImg :src="resultImg" :alt=resultImgAlt class="view-img" />
         <div class="search-img__btn-wrapper">
           <button @click="hiddenDetail" type="button" class="btn btn--g">닫기</button>
           <button @click="selectImg" type="button" class="btn">선택하기</button>
@@ -139,8 +139,7 @@
  
       safeTotalCont.value = Math.min(data.totalHits, maxTotal);
 
-
-      resultLists.value = data.hits.map(e => {return { id: e.id, preview : e.previewURL, imgSrc: e.largeImageURL, width:e.imageWidth, height: e.imageHeight }})
+      resultLists.value = data.hits.map(e => {return { id: e.id, preview : e.previewURL, imgSrc: e.largeImageURL, width:e.imageWidth, height: e.imageHeight, alt: e.tags }})
     } catch (e) {
       console.error(e)
       error.value = '이미지 검색 실패'
@@ -158,8 +157,10 @@
 
   const searchForAi = () => {}
   // 크게보기
+  const resultImgAlt = ref('');
   const showDetail = (idx) => {
     resultImg.value = resultLists.value[idx].imgSrc;
+    resultImgAlt.value = resultLists.value[idx].alt
     isShowResultImg.value = true;
   }
   // 크게보기 닫기
