@@ -24,7 +24,7 @@
       <EditorSettings/>
       <div class="btn-wrapper">
         <button type="button" class="btn btn-download" @click="saveAsImage(2, 1)">기본 다운로드</button>
-        <button @click="saveAsImage(2, 0.1)" type="button" class="btn btn-download--row">저화질 다운로드(ppt배경용)</button>
+        <button @click="saveAsImage(0.5, 0.1)" type="button" class="btn btn-download--row">저화질 다운로드(ppt배경용)</button>
       </div>
       <!--button wrapper-->
     </div>
