@@ -23,8 +23,8 @@
     <div class="ly-main__right">
       <EditorSettings/>
       <div class="btn-wrapper">
-        <button type="button" class="btn btn-download" @click="saveAsImage">기본 다운로드</button>
-        <button type="button" class="btn btn-download--row">저화질 다운로드(ppt배경용)</button>
+        <button type="button" class="btn btn-download" @click="saveAsImage(2, 1)">기본 다운로드</button>
+        <button @click="saveAsImage(2, 0.1)" type="button" class="btn btn-download--row">저화질 다운로드(ppt배경용)</button>
       </div>
       <!--button wrapper-->
     </div>
@@ -59,7 +59,7 @@ const changeRatio = () => {
     ratio.value='16/9'
     mobileSize.value = false;
   } else if (selectedRatio.value == ratioData.value[1]) {
-    ratio.value='5/4'
+    ratio.value='4/3'
     mobileSize.value = false;
   } else if (selectedRatio.value == ratioData.value[2]) {
     ratio.value='4/3'
@@ -68,7 +68,7 @@ const changeRatio = () => {
     ratio.value='16/10'
     mobileSize.value = false;
   } else if (selectedRatio.value == ratioData.value[4]) {
-    ratio.value='16/9'
+    ratio.value='16/9' // 일단 캔버스 사이즈 자체는 가로로 크게하기 위해
     mobileSize.value = true;
   }
 }
@@ -104,26 +104,28 @@ watch(quoteData, v => (inputQuoteData.value =  v.join('\n')  ))
 // 다운로드
 import html2canvas from 'html2canvas'
 
-const saveAsImage = async () => {
+const saveAsImage = async (scale, quality) => {
   if(!imgUrl.value){
     showAlert('다운로드 오류', '저장 할 이미지가 없습니다', 'error')
     return
   }
-  const target = document.querySelector('.canvas')
+  const target = document.querySelector('.canvas');
+  target.classList.remove('showBg');
   if (!target) return
-
+  
   const canvas = await html2canvas(target, {
     backgroundColor: 'transparent', // 투명 방지
-    scale: 2, // 해상도 ↑
+    scale: scale, // 해상도 ↑
     useCORS: true,
   })
-
-  const url = canvas.toDataURL('image/png')
-
+  
+  const url = canvas.toDataURL('image/png', quality) // 압축률
+  
   const link = document.createElement('a')
   link.href = url
   link.download = 'result.png'
   link.click()
+  target.classList.add('showBg');
 }
 
 const changeImg = () => {
@@ -170,7 +172,7 @@ const changeImg = () => {
       max-width: 65vw;
       width: 900px;
       margin-bottom: 5px;
-      border: 1px solid $dark-gray;
+      border: 1px solid $light-gray;
     }
   }
   //button

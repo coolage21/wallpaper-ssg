@@ -222,7 +222,7 @@
                 </div>
             </div>
             <div class="setting__item" role="group" aria-labelledby="box-size">
-              <p id="box-size" class="setting__sub-heading">크기<br/>(해상도 기준)</p>
+              <p id="box-size" class="setting__sub-heading">크기<br/><em class="">(해상도 기준)</em></p>
               <div class="setting__cont">
                 <div class="inline-flex">
                   <label for="box-row">가로(px) :</label>

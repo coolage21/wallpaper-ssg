@@ -34,9 +34,32 @@
         </div>
       </div>
       <!-- search for img -->
-      <div v-if="isShowResultLists" class="search-img__result">
+      <div v-if="loading" class="search-img__result">
+        <h4 class="hidden">검색로딩중</h4>
+          <div class="search-img__lists">
+            <div  class="search-img__list skeleton__list">
+            </div>
+            <div  class="search-img__list skeleton__list">
+            </div>
+            <div  class="search-img__list skeleton__list">
+            </div>
+            <div  class="search-img__list skeleton__list">
+            </div>
+            <div  class="search-img__list skeleton__list">
+            </div>
+            <div  class="search-img__list skeleton__list">
+            </div>
+            <div  class="search-img__list skeleton__list">
+            </div>
+            <div  class="search-img__list skeleton__list">
+            </div>
+            <div  class="search-img__list skeleton__list">
+            </div>
+          </div>
+      </div>
+      <div v-if="isShowResultLists && !loading" class="search-img__result">
         <h4 class="hidden">검색결과</h4>
-        <template v-if="resultLists.length > 0">
+        <template v-if="resultLists.length > 0 ">
           <div class="search-img__lists">
             <div v-for="(item, idx) in resultLists" class="search-img__list">
               <NuxtImg :src="item.preview" :alt="item.alt" />
@@ -107,6 +130,7 @@
   }
   // 검색하기 버튼
   const searchImg = () => {
+    
     if (isMethod.value == 'imgSite') {
       searchForImgSite();
     } else if (isMethod.value == 'ai') {
@@ -124,6 +148,7 @@
   const error = ref('')
   
   const searchForImgSite = async () => {
+    isShowResultLists.value = false;
     if (loading.value) return
     loading.value = true
     error.value = ''
@@ -244,6 +269,9 @@
       width: calc((100% - 60px) / 3);
       position: relative;
       aspect-ratio: 16 / 9;
+      &.skeleton__list {
+        animation: skeleton-gradient 0.5s infinite ease-in-out;
+      }
       img {
         display: block;
         width: 100%;

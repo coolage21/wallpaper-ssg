@@ -47,14 +47,14 @@ export const useEditorStore = defineStore('editor', () => {
     const addBox = ref(false);
     const boxColor = ref('#ffffff');
     const boxColorOpacity = ref('100'); // 0 ~ 100
-    const boxWidth = ref('800');
-    const boxHeight = ref('400');
+    const boxWidth = ref('1500');
+    const boxHeight = ref('900');
     const boxRounding = ref('0');
 
     // 해상도 데이터
     ratioData.value = [
       '일반pc (1920px x 1080px)',
-      'ppt5/4 (1600px x 1200x)',
+      'ppt5/4 (1600px x 1200px)',
       '아이패드4:3 (2048px x 1536px)',
       '갤럭시탭16:10 (1920px x 1200px)',
       '모바일9:20 (1080px x 2400px)',

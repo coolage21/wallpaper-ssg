@@ -59,16 +59,17 @@
         <button @click="insertBible" type="button" class="btn">성경구절 등록하기</button>
       </div>
     </div>
+    <LoadingBar/>
   </div>
 </template>
 <script setup>
   import { ref, version } from 'vue';
   import { useBible } from './../../composables/useBible'
   import {useEditorStore} from './../../stores/editor';
-
+  import { useLoading } from '@/composables/loading';
   const { fetchVerse, bibleList } = useBible();
-  const editorStore = useEditorStore();
-  
+  const editorStore = useEditorStore()
+  const { showLoading, hideLoading } = useLoading();
   // 열고 닫기
   const emit = defineEmits([
     'close-modal', 
@@ -107,15 +108,12 @@
   })
   
   // 성경 검색하기
-  const loading = ref(false) 
   const error = ref('')
 
   const applyVerse = async () => {
-  if (loading.value) return
-  loading.value = true
+  showLoading()
   error.value = ''
   passage.value = `${selectedBibleName.value} ${startChapter.value}:${startVerse.value}-${endChapter.value}:${endVerse.value}`
-  console.log(passage.value)
   try {
     const data = await fetchVerse(passage.value, selectedBibleVersion.value)
     bibleTxt.value = data.text;
@@ -123,7 +121,7 @@
     console.error(e)
     error.value = e?.message || '불러오기 실패'
   } finally {
-    loading.value = false
+    hideLoading()
   } 
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <section class="main__img canvas ">
+  <section class="main__img canvas showBg">
     <h2 class="hidden">이미지 및 결과 미리보기</h2>
     <div class="canvas__bg" :style="bgStyle">
     </div>
@@ -65,25 +65,9 @@
   // 비율 지정하기
   const imgW = ref('');
   const imgH = ref('')
-    const ratioRow = ref('');
+  const ratioRow = ref('');
   const ratioCol = ref('');
 
-  if (selectedRatio.value == ratioData.value[0]){
-    ratioRow.value='16'
-    ratioCol.value='9'
-  } else if (selectedRatio.value == ratioData.value[1]) {
-    ratioRow.value='5'
-    ratioCol.value='4'
-  } else if (selectedRatio.value == ratioData.value[2]) {
-    ratioRow.value='4'
-    ratioCol.value='3'
-  } else if (selectedRatio.value == ratioData.value[3]) {
-    ratioRow.value='16'
-    ratioCol.value='10'
-  } else if (selectedRatio.value == ratioData.value[4]) {
-    ratioRow.value='16'
-    ratioCol.value='9'
-  }
   watch(
     () => editorStore.imgUrl,
     (url) => {
@@ -99,6 +83,35 @@
           // 비율보다 세로로 더 길다면
           landscape.value = false
         }
+      }
+    },
+    { immediate: true }
+  )
+
+  watch(
+    selectedRatio,
+    () => {
+      if (selectedRatio.value == ratioData.value[0]){
+        ratioRow.value='1920'
+        ratioCol.value='1080'
+      } else if (selectedRatio.value == ratioData.value[1]) {
+        ratioRow.value='1600'
+        ratioCol.value='1200'
+      } else if (selectedRatio.value == ratioData.value[2]) {
+        ratioRow.value='2048'
+        ratioCol.value='1536'
+      } else if (selectedRatio.value == ratioData.value[3]) {
+        ratioRow.value='1920'
+        ratioCol.value='1200'
+      } else if (selectedRatio.value == ratioData.value[4]) {
+        ratioRow.value='1080'
+        ratioCol.value='2400'
+      }
+      if( imgW.value * ratioCol.value / ratioRow.value > imgH.value){
+        landscape.value = true
+      } else {
+        // 비율보다 세로로 더 길다면
+        landscape.value = false
       }
     },
     { immediate: true }
@@ -126,8 +139,8 @@
     display: addBox.value ? 'block' : 'none',
     background : boxColor.value,
     opacity : boxColorOpacity.value / 100, // 0 ~ 100
-    width : `${boxWidth.value}px`,
-    height : `${boxHeight.value}px`,
+    width : `${boxWidth.value * 100 / ratioRow.value}%`,
+    height : `${boxHeight.value * 100 / ratioCol.value}%`,
     borderRadius : `${boxRounding.value}px`,
   }))
 
@@ -156,7 +169,6 @@ const objectFit = computed(() => {
       case 'all': return '100% 100%'
       default: return 'cover'
     }
-
   }
 })
 
@@ -195,6 +207,10 @@ const centerColor = computed(() => {
     overflow: hidden;
     position: relative;
     @include flex-center;
+    &.showBg {
+      background-image: url(/images/bg_canvas.png);
+      background-size: cover;
+    }
     &__bg {
       width: 100%;
       height: 100%;
