@@ -153,4 +153,11 @@
     margin-right: 10px;
   }
   
+  @media screen and (max-width: 480px) {
+    .bible{
+      &__area {
+        height: calc(100vh - 360px);
+      }
+    }
+  }
 </style>

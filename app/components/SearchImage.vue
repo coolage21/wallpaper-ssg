@@ -89,6 +89,8 @@
 <script setup>
   import { ref, watch } from 'vue';
   import { useEditorStore } from './../../stores/editor';
+  import { usePixabay } from './../../composables/usePixabay';
+    const { fetchImgData } = usePixabay();
   const editorStore = useEditorStore();
   const config = useRuntimeConfig();
   const {
@@ -146,31 +148,19 @@
   const safeTotalCont = ref();
   const loading = ref(false) 
   const error = ref('')
+
+
+
   
   const searchForImgSite = async () => {
     isShowResultLists.value = false;
     if (loading.value) return
     loading.value = true
     error.value = ''
-    
-    var URL = `https://pixabay.com/api/?key=${config.public.apiKey}&q=${encodeURIComponent(searchTxt.value)}&page=${page.value}`;
-    try {
-      const res = await fetch(URL)
-      if (!res.ok) {
-        throw new Error('API 요청 실패')
-      }
-      const data = await res.json()
-      let maxTotal = 500;
- 
-      safeTotalCont.value = Math.min(data.totalHits, maxTotal);
-
-      resultLists.value = data.hits.map(e => {return { id: e.id, preview : e.previewURL, imgSrc: e.largeImageURL, width:e.imageWidth, height: e.imageHeight, alt: e.tags }})
-    } catch (e) {
-      console.error(e)
-      error.value = '이미지 검색 실패'
-    } finally {
-      loading.value = false
-    }
+    const { safeTotalContData, resultListsData } = await fetchImgData(config.public.apiKey, encodeURIComponent(searchTxt.value), page.value);
+    loading.value = false;
+    resultLists.value =resultListsData;
+    safeTotalCont.value =safeTotalContData;
   }
 
   watch(page, ()=> {
@@ -336,6 +326,11 @@
       z-index: -1;
       width: 10px;
       height: 10px;
+    }
+    label {
+      @include flex-center;
+      width: 100%;
+      height: 100%;
     }
   }
   .btn-search-img2 {
