@@ -6,15 +6,15 @@ export default defineNuxtConfig({
     head: {
       title: '배경화면 만들기', // 기본 타이틀
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: 'favicon/favicon.ico' },
-        { rel: 'icon', type: 'image/png', sizes: '16x16', href: 'favicon/favicon-16x16.png' },
-        { rel: 'icon', type: 'image/png', sizes: '32x32', href: 'favicon/favicon-32x32.png' },
-        { rel: 'apple-touch-icon', sizes: '180x180', href: 'favicon/apple-touch-icon.png' },
-        { rel: 'manifest', href: 'favicon/site.webmanifest' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon/favicon.ico' },
+        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon/favicon-16x16.png' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon/favicon-32x32.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/favicon/apple-touch-icon.png' },
+        { rel: 'manifest', href: '/favicon/site.webmanifest' },
       ],
       meta: [
         {name:'description', content:"pc와 모바일 폰의 배경화면을 만드는 사이트 입니다"},
-        {name:'keyword', content:"배경화면, 바탕화면, 이미지 편집기, 편집기, 이미지 수정, ppt 디자인, ppt 이미지, 백그라운드 이미지"},
+      
         {name:'author', content:"꿀에이지"},
         {property:'og:title', content:"배경화면 만들기"},
         {property:'og:description', content:"pc와 모바일 폰의 배경화면을 만드는 사이트 입니다"},
@@ -25,7 +25,9 @@ export default defineNuxtConfig({
       ],
     },
   },
-  target: 'static', // 정적 사이트 생성
+  nitro: {
+    preset: 'static'
+  },
   ssr: true,       // SSR 렌더링 방식 사용 (Hydration 위해 필요)
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
