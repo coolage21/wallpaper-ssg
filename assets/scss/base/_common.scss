@@ -31,6 +31,12 @@ body {
 .w-100 {
   width: 100%;
 }
+.m-none {
+  display: block;
+}
+.m-block {
+  display: none;
+}
 /* layout */
 #__nuxt {
   display: flex;
@@ -43,7 +49,6 @@ body {
   font-size: $f-l; 
   font-weight: 700;
 }
-
 /* utils*/
 // button
   .btn {
@@ -210,7 +215,8 @@ body {
   background-color: $silver-gray;
   padding: 40px;
   width: 1040px;
-  max-width: 90vw;
+  max-width: 100vw;
+  overflow: auto;
   &__wrapper {
     position: fixed;
     top:0;
@@ -233,11 +239,18 @@ body {
   .m-none {
     display: none;
   }
+  .m-block {
+    display: block;
+  }
   .wrapper {
-   margin: 20px 0;
+   margin: 20px 0 70px;
   }
   .btn {
     padding: 7px 12px;
+  }
+  .win {
+    height: 100vh;
+    padding: 20px;
   }
 }
 

@@ -24,7 +24,7 @@
       <EditorSettings/>
       <div class="btn-wrapper">
         <button type="button" class="btn btn-download" @click="saveAsImage(2, 1)">기본 다운로드</button>
-        <button @click="saveAsImage(0.5, 0.1)" type="button" class="btn btn-download--row">저화질 다운로드(ppt배경용)</button>
+        <button @click="saveAsImage(0.5, 0.1)" type="button" class="btn btn-download--row">저화질 다운로드<br class="m-block"/>(ppt배경용)</button>
       </div>
       <!--button wrapper-->
     </div>
@@ -201,9 +201,11 @@ const changeImg = () => {
       max-width: 95vw;
       &__right {
         padding-left: 0;
+        overflow: hidden;
       }
     }
     .main {
+      height: calc(100vh - 135px - 10px - 60px);
       flex-direction: column;
       &__img-wrapper {
         max-width: none;
@@ -214,7 +216,19 @@ const changeImg = () => {
       max-width: 100%;
     }
     .btn-wrapper {
-        bottom: 90%;
+      bottom:0;
+      position: fixed;
+      width: 100%;
+      .btn {
+        margin:0;
+        width: 50%;
+        &:nth-child(1){
+          border-right: 1px solid $white;
+        }
+      }
+    }
+    .btn-search-bible {
+      align-self:auto;
     }
   }   
 </style>

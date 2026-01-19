@@ -9,8 +9,8 @@
     <div v-else-if="currentSearchImgSection == 1" class="search-img btn-search-img2__wrapper search-img--dark">
       <h3 class="hidden">이미지 가져오는 방법 선택하기</h3>
       <!-- <button @click="goToNext('local')" type="button" class="btn btn-search-img2">내 컴퓨터에서 가져오기</button> -->
-       <div class="my-local">
-         <label for="my-local" class="btn btn-search-img2">내 컴퓨터에서 가져오기</label>
+       <div class="my-local btn btn-search-img2">
+         <label for="my-local" class="">내 컴퓨터에서 가져오기</label>
          <input type="file" accept="image/*" @change="onFileChange" id="my-local"/>
        </div>
       <button @click="goToNext('imgSite')" type="button" class="btn btn-search-img2">무료 이미지 사이트에서<br/>검색하기 (pixabay)</button>
@@ -236,6 +236,9 @@
         height: 40px;
         @include flex-center;
         background-color: $middle-gray;
+        img {
+          width: 20px;
+        }
       }
     }
     &__input {
@@ -338,6 +341,7 @@
   .btn-search-img2 {
     width: 200px;
     height: 230px;
+    max-height: 90%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -378,6 +382,19 @@
   }
 }
 
+  @media screen and (max-width: 768px) {
+   .search-img {
+     &--dark{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transform: translate(0, 0);
+        z-index: 99999;
+      } 
+    }
+  }
   @media screen and (max-width: 480px) {
   .search-img {
     &__result {
@@ -389,6 +406,13 @@
     .goBack {
       top: 10px;
       left: 10px;
+    }
+  }
+  .btn-search-img2 {
+    &__wrapper {
+      flex-direction: column;
+      padding:50px;
+      gap: 10px;
     }
   }
 }

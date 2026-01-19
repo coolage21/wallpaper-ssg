@@ -573,6 +573,8 @@
         transform: rotate(0deg);
         transition: .2s;
         align-self: center;
+        width: 12px;
+        height: 7px;
       }
       &:hover {
         img {
@@ -613,12 +615,14 @@
   .main {
     flex-direction: column;
     &__setting {
-      margin-top: 65px;
+      margin-top: 10px;
       padding-left: 0;
+      overflow: scroll;
+      height: 100%;
     }
   }
   .setting {
-    max-height: 50vh;
+    max-height:none;
   }
 }
 </style>
