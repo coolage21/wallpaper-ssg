@@ -26,7 +26,7 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    preset: 'static'
+    preset: 'cloudflare-pages'
   },
   ssr: true,       // SSR 렌더링 방식 사용 (Hydration 위해 필요)
   compatibilityDate: '2025-07-15',
