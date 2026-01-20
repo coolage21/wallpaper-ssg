@@ -129,10 +129,61 @@ import html2canvas from 'html2canvas'
 //   target.classList.add('showBg');
 // }
 import { Capacitor } from '@capacitor/core'
-import { Filesystem, Directory } from '@capacitor/filesystem'
-import { Media } from '@capacitor-community/media'
+// import { Filesystem, Directory } from '@capacitor/filesystem'
+// import { Media } from '@capacitor-community/media'
 
-const saveAsImage = async (scale, quality) => {
+// const saveAsImage = async (scale, quality) => {
+//   if (!imgUrl.value) {
+//     showAlert('다운로드 오류', '저장 할 이미지가 없습니다', 'error')
+//     return
+//   }
+
+//   const target = document.querySelector('.canvas')
+//   if (!target) return
+
+//   target.classList.remove('showBg')
+
+//   const canvas = await html2canvas(target, {
+//     backgroundColor: 'transparent',
+//     scale,
+//     useCORS: true,
+//   })
+
+//   const dataUrl = canvas.toDataURL('image/png', quality)
+
+//   const platform = Capacitor.getPlatform()
+
+//   // ✅ WEB
+//   if (platform === 'web') {
+//     const link = document.createElement('a')
+//     link.href = dataUrl
+//     link.download = 'result.png'
+//     link.click()
+//   }
+
+//   // ✅ IOS / ANDROID (사진으로 저장)
+//   if (platform === 'ios' || platform === 'android') {
+//     const base64 = dataUrl.replace(/^data:image\/png;base64,/, '')
+
+//     const fileName = `result_${Date.now()}.png`
+
+//     const file = await Filesystem.writeFile({
+//       path: fileName,
+//       data: base64,
+//       directory: Directory.Cache,
+//     })
+
+//     // 🔥 갤러리에 저장
+//     await Media.savePhoto({
+//       path: file.uri,
+//     })
+//   }
+
+//   target.classList.add('showBg')
+// }
+
+
+const saveAsImage = async (scale = 2, quality = 1) => {
   if (!imgUrl.value) {
     showAlert('다운로드 오류', '저장 할 이미지가 없습니다', 'error')
     return
@@ -151,7 +202,8 @@ const saveAsImage = async (scale, quality) => {
 
   const dataUrl = canvas.toDataURL('image/png', quality)
 
-  const platform = Capacitor.getPlatform()
+  // 🔥 이미지로 열기
+   const platform = Capacitor.getPlatform()
 
   // ✅ WEB
   if (platform === 'web') {
@@ -159,28 +211,26 @@ const saveAsImage = async (scale, quality) => {
     link.href = dataUrl
     link.download = 'result.png'
     link.click()
-  }
-
-  // ✅ IOS / ANDROID (사진으로 저장)
-  if (platform === 'ios' || platform === 'android') {
-    const base64 = dataUrl.replace(/^data:image\/png;base64,/, '')
-
-    const fileName = `result_${Date.now()}.png`
-
-    const file = await Filesystem.writeFile({
-      path: fileName,
-      data: base64,
-      directory: Directory.Cache,
-    })
-
-    // 🔥 갤러리에 저장
-    await Media.savePhoto({
-      path: file.uri,
-    })
+  } else {
+    const win = window.open()
+    if (win) {
+      win.document.write(`
+        <html>
+          <body style="margin:0;display:flex;justify-content:center;align-items:center;">
+            <img src="${dataUrl}" style="max-width:100%;height:auto;" />
+            <p style="position:fixed;bottom:10px;font-size:12px;">
+              이미지를 길게 눌러 사진에 저장하세요
+            </p>
+          </body>
+        </html>
+      `)
+    }
   }
 
   target.classList.add('showBg')
 }
+
+
 const changeImg = () => {
   isShowEditorCanvas.value = false
   currentSearchImgSection.value = 1;
