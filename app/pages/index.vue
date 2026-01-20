@@ -204,7 +204,7 @@ const saveAsImage = async (scale = 2, quality = 1) => {
 
   // 🔥 이미지로 열기
    const platform = Capacitor.getPlatform()
-
+  alert(platform)
   // ✅ WEB
   if (platform === 'web') {
     const link = document.createElement('a')
