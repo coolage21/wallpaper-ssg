@@ -123,21 +123,10 @@ const saveAsImage = async (scale, quality) => {
   const url = canvas.toDataURL('image/png', quality) // 압축률
   const isMobile =
   /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-
+  
   if(isMobile){
-       const win = window.open()
-    if (win) {
-      win.document.write(`
-        <html>
-          <body style="margin:0;display:flex;justify-content:center;align-items:center;">
-            <img src="${dataUrl}" style="max-width:100%;height:auto;" />
-            <p style="position:fixed;bottom:10px;font-size:12px;">
-              이미지를 길게 눌러 사진에 저장하세요
-            </p>
-          </body>
-        </html>
-      `)
-    }
+    showAlert('', '이미지를 길게 눌러 사진에 저장하세요', )
+    window.location.href = url
   } else {
 
     const link = document.createElement('a')
