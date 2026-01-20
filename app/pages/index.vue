@@ -121,33 +121,33 @@ const saveAsImage = async (scale, quality) => {
   })
   
   const url = canvas.toDataURL('image/png', quality) // 압축률
-  const isMobile =
-  /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-  if(isMobile){
-    let win = null
-    win = window.open('', '_blank')
-    if (!win) return
-    // showAlert('', '이미지를 길게 눌러 사진에 저장하세요', )
-        if (isMobile && win) {
-    // ✅ 이미 열려 있는 창에 이미지 삽입
-    win.document.write(`
-      <html>
-        <body style="margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;">
-          <img src="${url}" style="max-width:100%;height:auto;" />
-          <p style="font-size:12px;margin-top:10px;">
-            이미지를 길게 눌러 사진에 저장하세요
-          </p>
-        </body>
-      </html>
-    `)
-  }   
-  } else {
+  // const isMobile =
+  // /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+  // if(isMobile){
+  //   let win = null
+  //   win = window.open('', '_blank')
+  //   if (!win) return
+  //   // showAlert('', '이미지를 길게 눌러 사진에 저장하세요', )
+  //       if (isMobile && win) {
+  //   // ✅ 이미 열려 있는 창에 이미지 삽입
+  //   win.document.write(`
+  //     <html>
+  //       <body style="margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+  //         <img src="${url}" style="max-width:100%;height:auto;" />
+  //         <p style="font-size:12px;margin-top:10px;">
+  //           이미지를 길게 눌러 사진에 저장하세요
+  //         </p>
+  //       </body>
+  //     </html>
+  //   `)
+  // }   
+  // } else {
       const link = document.createElement('a')
       link.href = url
       link.download = 'result.png'
       link.click()
       target.classList.add('showBg');
-  }
+  // }
 }
 
 const changeImg = () => {
@@ -251,6 +251,13 @@ const changeImg = () => {
     }
     .btn-search-bible {
       align-self:auto;
+    }
+    :deep(.mobile .main__img){
+      width: fit-content;
+      // height: auto;
+      height: 35vh;
+      aspect-ratio: 9/20;
+      margin: 0 auto;
     }
   }   
 </style>
