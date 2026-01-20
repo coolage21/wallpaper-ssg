@@ -53,6 +53,6 @@ export default defineNuxtConfig({
     '@/assets/scss/main.scss'
   ],
    runtimeConfig: {
-    pixabayKey: process.env.NUXT_PUBLIC_API_KEY
+    privatePixabayKey: process.env.PIXABAY_API_KEY
   }
 })
