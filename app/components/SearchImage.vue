@@ -89,8 +89,6 @@
 <script setup>
   import { ref, watch } from 'vue';
   import { useEditorStore } from './../../stores/editor';
-  import { usePixabay } from './../../composables/usePixabay';
-    const { fetchImgData } = usePixabay();
   const editorStore = useEditorStore();
   const config = useRuntimeConfig();
   const {
@@ -157,10 +155,25 @@
     if (loading.value) return
     loading.value = true
     error.value = ''
-    const { safeTotalContData, resultListsData } = await fetchImgData(config.public.apiKey, encodeURIComponent(searchTxt.value), page.value);
+
+    const data = await $fetch('/api/pixabay', {
+      params: {
+        q: encodeURIComponent(searchTxt.value),
+        page: page.value
+      }
+    })
+    
+    resultLists.value = data.hits.map(e => ({
+      id: e.id,
+      preview: e.previewURL,
+      imgSrc: e.largeImageURL,
+      width: e.imageWidth,
+      height: e.imageHeight,
+      alt: e.tags
+    }))
+    let maxTotal = 500;
+    safeTotalCont.value = Math.min(data.totalHits, maxTotal);
     loading.value = false;
-    resultLists.value =resultListsData;
-    safeTotalCont.value =safeTotalContData;
   }
 
   watch(page, ()=> {
@@ -246,7 +259,7 @@
     }
     &__result {
       text-align: center;
-      height: calc(100% - 152px);
+      height: calc(100% - 162px);
       overflow-y: auto;
       padding: 0 30px 30px 30px;
     }
