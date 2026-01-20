@@ -105,30 +105,82 @@ watch(quoteData, v => (inputQuoteData.value =  v.join('\n')  ))
 // 다운로드
 import html2canvas from 'html2canvas'
 
+// const saveAsImage = async (scale, quality) => {
+//   if(!imgUrl.value){
+//     showAlert('다운로드 오류', '저장 할 이미지가 없습니다', 'error')
+//     return
+//   }
+//   const target = document.querySelector('.canvas');
+//   target.classList.remove('showBg');
+//   if (!target) return
+  
+//   const canvas = await html2canvas(target, {
+//     backgroundColor: 'transparent', // 투명 방지
+//     scale: scale, // 해상도 ↑
+//     useCORS: true,
+//   })
+  
+//   const url = canvas.toDataURL('image/png', quality) // 압축률
+  
+//   const link = document.createElement('a')
+//   link.href = url
+//   link.download = 'result.png'
+//   link.click()
+//   target.classList.add('showBg');
+// }
+import { Capacitor } from '@capacitor/core'
+import { Filesystem, Directory } from '@capacitor/filesystem'
+import { Media } from '@capacitor-community/media'
+
 const saveAsImage = async (scale, quality) => {
-  if(!imgUrl.value){
+  if (!imgUrl.value) {
     showAlert('다운로드 오류', '저장 할 이미지가 없습니다', 'error')
     return
   }
-  const target = document.querySelector('.canvas');
-  target.classList.remove('showBg');
+
+  const target = document.querySelector('.canvas')
   if (!target) return
-  
+
+  target.classList.remove('showBg')
+
   const canvas = await html2canvas(target, {
-    backgroundColor: 'transparent', // 투명 방지
-    scale: scale, // 해상도 ↑
+    backgroundColor: 'transparent',
+    scale,
     useCORS: true,
   })
-  
-  const url = canvas.toDataURL('image/png', quality) // 압축률
-  
-  const link = document.createElement('a')
-  link.href = url
-  link.download = 'result.png'
-  link.click()
-  target.classList.add('showBg');
-}
 
+  const dataUrl = canvas.toDataURL('image/png', quality)
+
+  const platform = Capacitor.getPlatform()
+
+  // ✅ WEB
+  if (platform === 'web') {
+    const link = document.createElement('a')
+    link.href = dataUrl
+    link.download = 'result.png'
+    link.click()
+  }
+
+  // ✅ IOS / ANDROID (사진으로 저장)
+  if (platform === 'ios' || platform === 'android') {
+    const base64 = dataUrl.replace(/^data:image\/png;base64,/, '')
+
+    const fileName = `result_${Date.now()}.png`
+
+    const file = await Filesystem.writeFile({
+      path: fileName,
+      data: base64,
+      directory: Directory.Cache,
+    })
+
+    // 🔥 갤러리에 저장
+    await Media.savePhoto({
+      path: file.uri,
+    })
+  }
+
+  target.classList.add('showBg')
+}
 const changeImg = () => {
   isShowEditorCanvas.value = false
   currentSearchImgSection.value = 1;
