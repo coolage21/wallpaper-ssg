@@ -24,8 +24,8 @@
     <div class="ly-main__right">
       <EditorSettings/>
       <div class="btn-wrapper">
-        <button type="button" class="btn btn-download" @click="saveAsImage(2, 1)">기본 다운로드</button>
-        <button @click="saveAsImage(1, 0.1)" type="button" class="btn btn-download--row">저화질 다운로드<br class="m-block"/>(ppt배경용)</button>
+        <button type="button" class="btn btn-download" @click="saveAsImage(1, 1)">기본 다운로드</button>
+        <button @click="saveAsImage(0.5, 0.1)" type="button" class="btn btn-download--row">저화질 다운로드<br class="m-block"/>(ppt배경용)</button>
       </div>
       <!--button wrapper-->
     </div>
@@ -55,21 +55,33 @@ const {
 // 해상도에 맞은 비율 사이즈
 const ratio = ref('');
 const mobileSize = ref(false);
+const EXPORT_WIDTH = ref(1920);
+const EXPORT_HEIGHT = ref(1080);
 const changeRatio = () => {
   if (selectedRatio.value == ratioData.value[0]){
     ratio.value='16/9'
+    EXPORT_WIDTH.value = 1920;
+    EXPORT_HEIGHT.value = 1080;
     mobileSize.value = false;
   } else if (selectedRatio.value == ratioData.value[1]) {
-    ratio.value='4/3'
+    ratio.value='5/4'
+    EXPORT_WIDTH.value = 1600
+    EXPORT_HEIGHT.value = 1280
     mobileSize.value = false;
   } else if (selectedRatio.value == ratioData.value[2]) {
     ratio.value='4/3'
+    EXPORT_WIDTH.value = 2048
+    EXPORT_HEIGHT.value = 1536
     mobileSize.value = false;
   } else if (selectedRatio.value == ratioData.value[3]) {
     ratio.value='16/10'
+    EXPORT_WIDTH.value = 1920
+    EXPORT_HEIGHT.value = 1200
     mobileSize.value = false;
   } else if (selectedRatio.value == ratioData.value[4]) {
     ratio.value='16/9' // 일단 캔버스 사이즈 자체는 가로로 크게하기 위해
+    EXPORT_WIDTH.value = 1080
+    EXPORT_HEIGHT.value = 2400
     mobileSize.value = true;
   }
 }
@@ -105,49 +117,52 @@ watch(quoteData, v => (inputQuoteData.value =  v.join('\n')  ))
 // 다운로드
 import html2canvas from 'html2canvas'
 
-const saveAsImage = async (scale, quality) => {
-  if(!imgUrl.value){
-    showAlert('다운로드 오류', '저장 할 이미지가 없습니다', 'error')
+const saveAsImage = async (aa, quality) => {
+  const target = document.querySelector('.canvas')
+  if (!target) {
+    alert('canvas 없음')
     return
   }
-  const target = document.querySelector('.canvas');
-  target.classList.remove('showBg');
-  if (!target) return
-  
+
+  await document.fonts.ready
+
+  const dpr = window.devicePixelRatio || 1
+
   const canvas = await html2canvas(target, {
-    backgroundColor: 'transparent', // 투명 방지
-    scale: scale, // 해상도 ↑
+    scale: dpr * aa,
+    width: EXPORT_WIDTH.value,
+    height: EXPORT_HEIGHT.value,
+    windowWidth: EXPORT_WIDTH.value,
+    windowHeight: EXPORT_HEIGHT.value,
+    backgroundColor: null,
     useCORS: true,
+
+    // 🔥 핵심: 여기서 export 전용 DOM 수정
+    onclone: (clonedDoc) => {
+      const clonedTarget = clonedDoc.querySelector('.canvas')
+      if (!clonedTarget) return
+
+      clonedTarget.style.width = `${EXPORT_WIDTH.value}px`
+      clonedTarget.style.height = `${EXPORT_HEIGHT.value}px`
+      clonedTarget.style.transform = 'none'
+      clonedTarget.style.overflow = 'visible'
+      clonedTarget.classList.remove('showBg')
+
+      // ❗ 부모 영향 차단
+      let parent = clonedTarget.parentElement
+      while (parent) {
+        parent.style.transform = 'none'
+        parent.style.overflow = 'visible'
+        parent = parent.parentElement
+      }
+    }
   })
-  
-  const url = canvas.toDataURL('image/png', quality) // 압축률
-  // const isMobile =
-  // /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
-  // if(isMobile){
-  //   let win = null
-  //   win = window.open('', '_blank')
-  //   if (!win) return
-  //   // showAlert('', '이미지를 길게 눌러 사진에 저장하세요', )
-  //       if (isMobile && win) {
-  //   // ✅ 이미 열려 있는 창에 이미지 삽입
-  //   win.document.write(`
-  //     <html>
-  //       <body style="margin:0;display:flex;flex-direction:column;justify-content:center;align-items:center;">
-  //         <img src="${url}" style="max-width:100%;height:auto;" />
-  //         <p style="font-size:12px;margin-top:10px;">
-  //           이미지를 길게 눌러 사진에 저장하세요
-  //         </p>
-  //       </body>
-  //     </html>
-  //   `)
-  // }   
-  // } else {
-      const link = document.createElement('a')
-      link.href = url
-      link.download = 'result.png'
-      link.click()
-      target.classList.add('showBg');
-  // }
+
+  const url = canvas.toDataURL('image/png', quality)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'result.png'
+  link.click()
 }
 
 const changeImg = () => {
@@ -254,8 +269,7 @@ const changeImg = () => {
     }
     :deep(.mobile .main__img){
       width: fit-content;
-      // height: auto;
-      height: 35vh;
+      max-height: 50vh;
       aspect-ratio: 9/20;
       margin: 0 auto;
     }

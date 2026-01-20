@@ -136,7 +136,6 @@
     } else if (isMethod.value == 'ai') {
       searchForAi();
     }
-    isShowResultLists.value = true; // 결과 보이게
   }
 
 
@@ -174,6 +173,7 @@
     let maxTotal = 500;
     safeTotalCont.value = Math.min(data.totalHits, maxTotal);
     loading.value = false;
+    isShowResultLists.value = true;
   }
 
   watch(page, ()=> {
