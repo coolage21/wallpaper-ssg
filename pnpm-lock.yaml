@@ -8,15 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@capacitor-community/media':
-        specifier: ^9.0.1
-        version: 9.0.1(@capacitor/core@8.0.1)
-      '@capacitor/filesystem':
-        specifier: ^8.0.0
-        version: 8.0.0(@capacitor/core@8.0.1)
-      '@capacitor/share':
-        specifier: ^8.0.0
-        version: 8.0.0(@capacitor/core@8.0.1)
       '@nuxt/image':
         specifier: 2.0.0
         version: 2.0.0(db0@0.3.4)(ioredis@5.8.2)(magicast@0.5.1)
@@ -189,27 +180,6 @@ packages:
         optional: true
       commander:
         optional: true
-
-  '@capacitor-community/media@9.0.1':
-    resolution: {integrity: sha512-MYTaEQduZc0vpzDX/glMQjPYdYUm/17I5sQslnpvk91e+xjpJkjRYNh11vtWzlR7WZpxf1X1ScqtGhR6B2F65Q==}
-    peerDependencies:
-      '@capacitor/core': '>=8.0.0'
-
-  '@capacitor/core@8.0.1':
-    resolution: {integrity: sha512-5UqSWxGMp/B8KhYu7rAijqNtYslhcLh+TrbfU48PfdMDsPfaU/VY48sMNzC22xL8BmoFoql/3SKyP+pavTOvOA==}
-
-  '@capacitor/filesystem@8.0.0':
-    resolution: {integrity: sha512-RRGNLW9xEqvVVHGyGlfS4Oy0R3Na+bEefwZElKbex22S9eZr5cg8wc750BPPVwbcv5lf5fJymkY8x8y6UwKPyg==}
-    peerDependencies:
-      '@capacitor/core': '>=8.0.0'
-
-  '@capacitor/share@8.0.0':
-    resolution: {integrity: sha512-VU+xT4LFwr4keIC0UKDqGQVAiNlAHwoTMQg8wVVSxtn/k32VOvvtqFfu63qnXr40WKytZWrxJfVESvRjd761yg==}
-    peerDependencies:
-      '@capacitor/core': '>=8.0.0'
-
-  '@capacitor/synapse@1.0.4':
-    resolution: {integrity: sha512-/C1FUo8/OkKuAT4nCIu/34ny9siNHr9qtFezu4kxm6GY1wNFxrCFWjfYx5C1tUhVGz3fxBABegupkpjXvjCHrw==}
 
   '@capsizecss/unpack@3.0.1':
     resolution: {integrity: sha512-8XqW8xGn++Eqqbz3e9wKuK7mxryeRjs4LOHLxbh2lwKeSbuNR4NFifDZT4KzvjU6HMOPbiNTsWpniK5EJfTWkg==}
@@ -4618,25 +4588,6 @@ snapshots:
     optionalDependencies:
       cac: 6.7.14
       citty: 0.1.6
-
-  '@capacitor-community/media@9.0.1(@capacitor/core@8.0.1)':
-    dependencies:
-      '@capacitor/core': 8.0.1
-
-  '@capacitor/core@8.0.1':
-    dependencies:
-      tslib: 2.8.1
-
-  '@capacitor/filesystem@8.0.0(@capacitor/core@8.0.1)':
-    dependencies:
-      '@capacitor/core': 8.0.1
-      '@capacitor/synapse': 1.0.4
-
-  '@capacitor/share@8.0.0(@capacitor/core@8.0.1)':
-    dependencies:
-      '@capacitor/core': 8.0.1
-
-  '@capacitor/synapse@1.0.4': {}
 
   '@capsizecss/unpack@3.0.1':
     dependencies:
