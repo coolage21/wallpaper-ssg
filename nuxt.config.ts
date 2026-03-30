@@ -14,13 +14,13 @@ export default defineNuxtConfig({
       ],
       meta: [
         {name:'description', content:"pc와 모바일 폰의 배경화면을 만드는 사이트 입니다"},
-      
+        
         {name:'author', content:"꿀에이지"},
         {property:'og:title', content:"배경화면 만들기"},
         {property:'og:description', content:"pc와 모바일 폰의 배경화면을 만드는 사이트 입니다"},
         {property:'og:type', content:"website"},
-        {property:'og:url', content:"https://www.example.com"},
-        {property:'og:image', content:"https://www.example.com/images/og-image.jpg"},
+        {property:'og:url', content:"https://wallpaper-edit.pages.dev/"},
+        {property:'og:image', content:"https://wallpaper-edit.pages.dev/images/img_main.png"},
         {property:'og:site_name', content:"배경화면 만들기"},
       ],
     },
